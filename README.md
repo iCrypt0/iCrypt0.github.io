@@ -220,7 +220,7 @@ footer {
 <div class="topo-wrap">
   <div class="topo-label"><b>lab status: online</b> &nbsp;·&nbsp; live network topology</div>
   <div class="topo">
-    <svg viewBox="0 0 1000 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Home lab network topology showing internet traffic flowing through OPNsense firewall to Proxmox host running Wazuh SIEM and a honeypot">
+      <svg viewBox="0 0 1000 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Home network topology: internet enters through OPNsense firewall running on a Proxmox Beelink host which also runs Wazuh SIEM and a honeypot, then flows through a switch to the router, which serves a PC over ethernet, a laptop over wifi, and a planned Raspberry Pi wall dashboard">
       <defs>
         <radialGradient id="nodeGlow" cx="50%" cy="50%" r="50%">
           <stop offset="0%" stop-color="#185fa5" stop-opacity="0.25"/>
@@ -228,43 +228,65 @@ footer {
         </radialGradient>
       </defs>
  
-      <path id="p1" d="M 120 170 L 330 170" stroke="#1f3553" stroke-width="2" fill="none"/>
-      <path id="p2" d="M 430 170 L 600 170" stroke="#1f3553" stroke-width="2" fill="none"/>
-      <path id="p3" d="M 700 170 Q 760 170 790 110 L 820 80" stroke="#1f3553" stroke-width="2" fill="none"/>
-      <path id="p4" d="M 700 170 Q 760 170 790 230 L 820 260" stroke="#1f3553" stroke-width="2" fill="none"/>
+      <path id="p1" d="M 100 220 L 195 220" stroke="#1f3553" stroke-width="2" fill="none"/>
+      <path id="p2" d="M 455 220 L 545 220" stroke="#1f3553" stroke-width="2" fill="none"/>
+      <path id="p3" d="M 645 220 L 730 220" stroke="#1f3553" stroke-width="2" fill="none"/>
+      <path id="p4" d="M 825 185 Q 855 130 890 105" stroke="#1f3553" stroke-width="2" fill="none"/>
+      <path id="p5" d="M 825 255 Q 855 310 890 335" stroke="#1f3553" stroke-width="1.5" stroke-dasharray="5 5" fill="none"/>
+      <path id="p6" d="M 730 255 Q 700 320 645 345" stroke="#1f3553" stroke-width="1.5" stroke-dasharray="5 5" fill="none"/>
  
-      <circle cx="120" cy="170" r="70" fill="url(#nodeGlow)"/>
-      <circle cx="120" cy="170" r="34" fill="#0a1322" stroke="#378add" stroke-width="1.5"/>
-      <text x="120" y="175" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" fill="#85b7eb">WAN</text>
-      <text x="120" y="232" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#6b7f99">internet</text>
+      <circle cx="100" cy="220" r="58" fill="url(#nodeGlow)"/>
+      <circle cx="100" cy="220" r="32" fill="#0a1322" stroke="#378add" stroke-width="1.5"/>
+      <text x="100" y="225" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#85b7eb">WAN</text>
+      <text x="100" y="277" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#6b7f99">isp</text>
  
-      <rect x="330" y="130" width="100" height="80" rx="8" fill="#0d1726" stroke="#378add" stroke-width="1.5"/>
-      <text x="380" y="165" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" fill="#b5d4f4">OPNsense</text>
-      <text x="380" y="186" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#6b7f99">firewall</text>
+      <rect x="195" y="105" width="260" height="230" rx="10" fill="#0a1322" stroke="#378add" stroke-width="1.5"/>
+      <text x="325" y="133" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#85b7eb">Proxmox · beelink</text>
+      <line x1="215" y1="148" x2="435" y2="148" stroke="#1f3553" stroke-width="1"/>
  
-      <rect x="600" y="120" width="100" height="100" rx="8" fill="#0d1726" stroke="#185fa5" stroke-width="1.5"/>
-      <text x="650" y="160" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" fill="#b5d4f4">Proxmox</text>
-      <text x="650" y="181" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#6b7f99">beelink host</text>
+      <rect x="215" y="165" width="220" height="44" rx="6" fill="#0d1726" stroke="#185fa5" stroke-width="1.5"/>
+      <text x="325" y="184" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#b5d4f4">OPNsense</text>
+      <text x="325" y="200" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#6b7f99">edge firewall · gateway</text>
  
-      <rect x="820" y="45" width="120" height="70" rx="8" fill="#0d1726" stroke="#185fa5" stroke-width="1.5"/>
-      <text x="880" y="75" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" fill="#b5d4f4">Wazuh</text>
-      <text x="880" y="96" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#6b7f99">SIEM</text>
+      <rect x="215" y="219" width="220" height="44" rx="6" fill="#0d1726" stroke="#185fa5" stroke-width="1.5"/>
+      <text x="325" y="238" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#b5d4f4">Wazuh</text>
+      <text x="325" y="254" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#6b7f99">SIEM vm</text>
  
-      <rect x="820" y="225" width="120" height="70" rx="8" fill="#0d1726" stroke="#185fa5" stroke-width="1.5"/>
-      <text x="880" y="255" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" fill="#b5d4f4">honeypot</text>
-      <text x="880" y="276" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#6b7f99">threat intel</text>
+      <rect x="215" y="273" width="220" height="44" rx="6" fill="#0d1726" stroke="#185fa5" stroke-width="1.5"/>
+      <text x="325" y="292" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#b5d4f4">honeypot</text>
+      <text x="325" y="308" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#6b7f99">threat intel vm</text>
+ 
+      <rect x="545" y="190" width="100" height="60" rx="8" fill="#0d1726" stroke="#378add" stroke-width="1.5"/>
+      <text x="595" y="216" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#b5d4f4">switch</text>
+      <text x="595" y="234" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#6b7f99">repurposed router</text>
+ 
+      <rect x="730" y="190" width="95" height="60" rx="8" fill="#0d1726" stroke="#378add" stroke-width="1.5"/>
+      <text x="777" y="216" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#b5d4f4">router</text>
+      <text x="777" y="234" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#6b7f99">lan + wifi</text>
+ 
+      <rect x="890" y="62" width="95" height="56" rx="8" fill="#0d1726" stroke="#185fa5" stroke-width="1.5"/>
+      <text x="937" y="86" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#b5d4f4">PC</text>
+      <text x="937" y="103" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#6b7f99">ethernet · agent</text>
+ 
+      <rect x="890" y="318" width="95" height="56" rx="8" fill="#0d1726" stroke="#185fa5" stroke-width="1.5"/>
+      <text x="937" y="342" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#b5d4f4">laptop</text>
+      <text x="937" y="359" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#6b7f99">wifi · agent</text>
+ 
+      <rect x="545" y="318" width="110" height="56" rx="8" fill="#0a1322" stroke="#3d4f66" stroke-width="1.5" stroke-dasharray="6 4"/>
+      <text x="600" y="342" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#6b7f99">pi dashboard</text>
+      <text x="600" y="359" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#3d4f66">planned · wall mount</text>
  
       <circle class="packet" r="4" fill="#378add">
-        <animateMotion dur="3s" repeatCount="indefinite"><mpath href="#p1"/></animateMotion>
+        <animateMotion dur="2.4s" repeatCount="indefinite"><mpath href="#p1"/></animateMotion>
       </circle>
       <circle class="packet" r="4" fill="#378add">
-        <animateMotion dur="3s" begin="1s" repeatCount="indefinite"><mpath href="#p2"/></animateMotion>
+        <animateMotion dur="2.4s" begin="0.8s" repeatCount="indefinite"><mpath href="#p2"/></animateMotion>
       </circle>
-      <circle class="packet" r="4" fill="#85b7eb">
-        <animateMotion dur="2.5s" begin="0.5s" repeatCount="indefinite"><mpath href="#p3"/></animateMotion>
+      <circle class="packet" r="4" fill="#378add">
+        <animateMotion dur="2.4s" begin="1.6s" repeatCount="indefinite"><mpath href="#p3"/></animateMotion>
       </circle>
-      <circle class="packet" r="4" fill="#85b7eb">
-        <animateMotion dur="2.8s" begin="1.4s" repeatCount="indefinite"><mpath href="#p4"/></animateMotion>
+      <circle class="packet" r="3.5" fill="#85b7eb">
+        <animateMotion dur="2s" begin="0.5s" repeatCount="indefinite"><mpath href="#p4"/></animateMotion>
       </circle>
     </svg>
   </div>
