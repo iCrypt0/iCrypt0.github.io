@@ -214,7 +214,7 @@ footer {
  
 <div class="hero">
   <div class="kicker">chandler — north georgia</div>
-  <h1>i learn by <em>patterns</em> and <em>puzzles</em>.<br>cybersecurity is the best one yet.<span class="cursor"></span></h1>
+  <h1>i learn by <em><span id="rotator">patterns</span></em><span class="cursor"></span></h1>
   <p class="sub">IT student at Kennesaw State, A.S. in Cybersecurity from Lanier Tech. Always been the tech kid — fixing the router, picking the hacker class in every co-op game. Now I run a live home lab and break down problems for fun.</p>
 </div>
  
@@ -387,6 +387,44 @@ footer {
  
 </main>
  
+<script>
+(function () {
+  const el = document.getElementById('rotator');
+  if (!el) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    el.textContent = 'patterns and puzzles';
+    return;
+  }
+ 
+  const words = ['patterns', 'puzzles', 'failures', 'experience', 'curiosity', 'doing'];
+  let wordIdx = 0, charIdx = words[0].length, deleting = false;
+ 
+  function step() {
+    const word = words[wordIdx];
+    if (!deleting) {
+      charIdx++;
+      el.textContent = word.slice(0, charIdx);
+      if (charIdx >= word.length) {
+        deleting = true;
+        setTimeout(step, 2000);
+        return;
+      }
+      setTimeout(step, 70);
+    } else {
+      charIdx--;
+      el.textContent = word.slice(0, charIdx);
+      if (charIdx <= 0) {
+        deleting = false;
+        wordIdx = (wordIdx + 1) % words.length;
+        setTimeout(step, 350);
+        return;
+      }
+      setTimeout(step, 40);
+    }
+  }
+  setTimeout(step, 2000);
+})();
+</script>
 <script>
 (function () {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
