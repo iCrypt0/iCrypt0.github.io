@@ -199,6 +199,7 @@ footer {
 </head>
 <body>
 <div class="gridlines"></div>
+<canvas id="traces" style="position:fixed;inset:0;z-index:0;pointer-events:none;"></canvas>
 <main>
  
 <nav>
@@ -220,7 +221,7 @@ footer {
 <div class="topo-wrap">
   <div class="topo-label"><b>lab status: online</b> &nbsp;·&nbsp; live network topology</div>
   <div class="topo">
-      <svg viewBox="0 0 1000 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Home network topology: internet enters through OPNsense firewall running on a Proxmox Beelink host which also runs Wazuh SIEM and a honeypot, then flows through a switch to the router, which serves a PC over ethernet, a laptop over wifi, and a planned Raspberry Pi wall dashboard">
+    <svg viewBox="0 0 1000 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Home network topology: internet enters through OPNsense firewall running on a Proxmox Beelink host which also runs Wazuh SIEM and a honeypot, then flows through a switch to the router, which serves a PC over ethernet, a laptop over wifi, and a planned Raspberry Pi wall dashboard">
       <defs>
         <radialGradient id="nodeGlow" cx="50%" cy="50%" r="50%">
           <stop offset="0%" stop-color="#185fa5" stop-opacity="0.25"/>
@@ -385,5 +386,93 @@ footer {
 <footer>iCrypt0 © 2026 · built from scratch, hosted on github pages</footer>
  
 </main>
+ 
+<script>
+(function () {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+ 
+  const canvas = document.getElementById('traces');
+  const ctx = canvas.getContext('2d');
+  const GRID = 56;
+  const COLORS = ['#378add', '#185fa5', '#85b7eb'];
+  const RED = '#e24b4a';
+  const MAX_CYCLES = 4;
+  let cycles = [];
+ 
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+ 
+  function snap(v) { return Math.round(v / GRID) * GRID; }
+ 
+  function spawn(isRed) {
+    const horizontal = Math.random() < 0.5;
+    const dir = Math.random() < 0.5 ? 1 : -1;
+    return {
+      x: horizontal ? (dir === 1 ? 0 : canvas.width) : snap(Math.random() * canvas.width),
+      y: horizontal ? snap(Math.random() * canvas.height) : (dir === 1 ? 0 : canvas.height),
+      dx: horizontal ? dir : 0,
+      dy: horizontal ? 0 : dir,
+      speed: isRed ? 2.4 : 1.5 + Math.random() * 1.5,
+      color: isRed ? RED : COLORS[Math.floor(Math.random() * COLORS.length)],
+      red: !!isRed,
+      life: 0,
+      maxLife: isRed ? 300 + Math.random() * 200 : 400 + Math.random() * 400
+    };
+  }
+ 
+  function maybeTurn(c) {
+    const onX = Math.abs(c.x - snap(c.x)) < c.speed;
+    const onY = Math.abs(c.y - snap(c.y)) < c.speed;
+    if (onX && onY && Math.random() < 0.18) {
+      c.x = snap(c.x); c.y = snap(c.y);
+      if (c.dx !== 0) { c.dy = Math.random() < 0.5 ? 1 : -1; c.dx = 0; }
+      else { c.dx = Math.random() < 0.5 ? 1 : -1; c.dy = 0; }
+    }
+  }
+ 
+  function tick() {
+    ctx.fillStyle = 'rgba(5, 10, 20, 0.045)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+ 
+    while (cycles.filter(c => !c.red).length < MAX_CYCLES) cycles.push(spawn(false));
+    if (!cycles.some(c => c.red) && Math.random() < 0.005) cycles.push(spawn(true));
+ 
+    ctx.lineWidth = 1.5;
+    ctx.lineCap = 'round';
+ 
+    cycles.forEach(c => {
+      const px = c.x, py = c.y;
+      c.x += c.dx * c.speed;
+      c.y += c.dy * c.speed;
+      c.life++;
+      maybeTurn(c);
+ 
+      ctx.strokeStyle = c.color;
+      ctx.shadowColor = c.color;
+      ctx.shadowBlur = 6;
+      ctx.globalAlpha = 0.5;
+      ctx.beginPath();
+      ctx.moveTo(px, py);
+      ctx.lineTo(c.x, c.y);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+      ctx.shadowBlur = 0;
+    });
+ 
+    cycles = cycles.filter(c =>
+      c.life < c.maxLife &&
+      c.x > -GRID && c.x < canvas.width + GRID &&
+      c.y > -GRID && c.y < canvas.height + GRID
+    );
+ 
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+</script>
 </body>
 </html>
