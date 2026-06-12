@@ -435,7 +435,9 @@ footer {
   const COLORS = ['#378add', '#185fa5', '#85b7eb'];
   const RED = '#e24b4a';
   const MAX_CYCLES = 4;
+  const TRAIL_LEN = 110;
   let cycles = [];
+  let sparks = [];
  
   function resize() {
     canvas.width = window.innerWidth;
@@ -449,16 +451,19 @@ footer {
   function spawn(isRed) {
     const horizontal = Math.random() < 0.5;
     const dir = Math.random() < 0.5 ? 1 : -1;
+    const x = horizontal ? (dir === 1 ? 0 : canvas.width) : snap(Math.random() * canvas.width);
+    const y = horizontal ? snap(Math.random() * canvas.height) : (dir === 1 ? 0 : canvas.height);
     return {
-      x: horizontal ? (dir === 1 ? 0 : canvas.width) : snap(Math.random() * canvas.width),
-      y: horizontal ? snap(Math.random() * canvas.height) : (dir === 1 ? 0 : canvas.height),
+      x: x, y: y,
       dx: horizontal ? dir : 0,
       dy: horizontal ? 0 : dir,
       speed: isRed ? 2.4 : 1.5 + Math.random() * 1.5,
       color: isRed ? RED : COLORS[Math.floor(Math.random() * COLORS.length)],
       red: !!isRed,
       life: 0,
-      maxLife: isRed ? 300 + Math.random() * 200 : 400 + Math.random() * 400
+      maxLife: isRed ? 300 + Math.random() * 200 : 400 + Math.random() * 400,
+      dying: false,
+      trail: [{x: x, y: y}]
     };
   }
  
@@ -472,9 +477,35 @@ footer {
     }
   }
  
+  function explode(x, y) {
+    for (let i = 0; i < 18; i++) {
+      const a = (Math.PI * 2 * i) / 18 + Math.random() * 0.4;
+      const sp = 1 + Math.random() * 2.5;
+      sparks.push({
+        x: x, y: y,
+        vx: Math.cos(a) * sp,
+        vy: Math.sin(a) * sp,
+        life: 1,
+        color: Math.random() < 0.6 ? RED : '#85b7eb'
+      });
+    }
+  }
+ 
+  function checkIntercept(red) {
+    for (const c of cycles) {
+      if (c.red) continue;
+      const step = 4;
+      for (let i = 0; i < c.trail.length; i += step) {
+        const p = c.trail[i];
+        const dx = red.x - p.x, dy = red.y - p.y;
+        if (dx * dx + dy * dy < 49) return true;
+      }
+    }
+    return false;
+  }
+ 
   function tick() {
-    ctx.fillStyle = 'rgba(5, 10, 20, 0.045)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
  
     while (cycles.filter(c => !c.red).length < MAX_CYCLES) cycles.push(spawn(false));
     if (!cycles.some(c => c.red) && Math.random() < 0.005) cycles.push(spawn(true));
@@ -483,29 +514,52 @@ footer {
     ctx.lineCap = 'round';
  
     cycles.forEach(c => {
-      const px = c.x, py = c.y;
-      c.x += c.dx * c.speed;
-      c.y += c.dy * c.speed;
-      c.life++;
-      maybeTurn(c);
+      if (!c.dying) {
+        c.x += c.dx * c.speed;
+        c.y += c.dy * c.speed;
+        c.life++;
+        maybeTurn(c);
+        c.trail.push({x: c.x, y: c.y});
+        if (c.trail.length > TRAIL_LEN) c.trail.shift();
+        if (c.red && checkIntercept(c)) {
+          explode(c.x, c.y);
+          c.dying = true;
+        }
+        const off = c.x < -GRID || c.x > canvas.width + GRID || c.y < -GRID || c.y > canvas.height + GRID;
+        if (c.life >= c.maxLife || off) c.dying = true;
+      } else {
+        c.trail.shift();
+        c.trail.shift();
+      }
  
       ctx.strokeStyle = c.color;
       ctx.shadowColor = c.color;
       ctx.shadowBlur = 6;
-      ctx.globalAlpha = 0.5;
-      ctx.beginPath();
-      ctx.moveTo(px, py);
-      ctx.lineTo(c.x, c.y);
-      ctx.stroke();
+      for (let i = 1; i < c.trail.length; i++) {
+        ctx.globalAlpha = (i / c.trail.length) * 0.5;
+        ctx.beginPath();
+        ctx.moveTo(c.trail[i - 1].x, c.trail[i - 1].y);
+        ctx.lineTo(c.trail[i].x, c.trail[i].y);
+        ctx.stroke();
+      }
       ctx.globalAlpha = 1;
       ctx.shadowBlur = 0;
     });
  
-    cycles = cycles.filter(c =>
-      c.life < c.maxLife &&
-      c.x > -GRID && c.x < canvas.width + GRID &&
-      c.y > -GRID && c.y < canvas.height + GRID
-    );
+    cycles = cycles.filter(c => c.trail.length > 1);
+ 
+    sparks.forEach(s => {
+      s.x += s.vx;
+      s.y += s.vy;
+      s.vx *= 0.96;
+      s.vy *= 0.96;
+      s.life -= 0.025;
+      ctx.globalAlpha = Math.max(s.life, 0) * 0.8;
+      ctx.fillStyle = s.color;
+      ctx.fillRect(s.x - 1.5, s.y - 1.5, 3, 3);
+    });
+    ctx.globalAlpha = 1;
+    sparks = sparks.filter(s => s.life > 0);
  
     requestAnimationFrame(tick);
   }
