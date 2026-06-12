@@ -377,7 +377,7 @@ footer {
     <p>Open to help desk, SOC analyst, and IT support opportunities in the Metro Atlanta Area. Always down to talk home labs.</p>
     <div class="contact-links">
       <a href="https://github.com/iCrypt0" target="_blank" rel="noopener">github</a>
-      <a href="https://www.linkedin.com/chandlerkirk" target="_blank" rel="noopener">linkedin</a>
+      <a href="https://www.linkedin.com/in/chandlerkirk" target="_blank" rel="noopener">linkedin</a>
     </div>
   </div>
 </section>
