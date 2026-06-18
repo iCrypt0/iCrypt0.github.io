@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>writeups — chandler / icrypt0</title>
+<meta name="description" content="Lab writeups and real decisions made building a home cybersecurity lab.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #050a14;
+  --bg-raise: #0a1322;
+  --bg-card: #0d1726;
+  --line: #16243a;
+  --line-bright: #1f3553;
+  --blue-100: #b5d4f4;
+  --blue-200: #85b7eb;
+  --blue-400: #378add;
+  --blue-600: #185fa5;
+  --blue-deep: #0c447c;
+  --red: #e24b4a;
+  --text: #c4d3e6;
+  --text-dim: #6b7f99;
+  --text-faint: #3d4f66;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Inter', sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--blue-deep); color: #fff; }
+
+.gridlines {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 56px 56px;
+  opacity: 0.35;
+  mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, black 0%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, black 0%, transparent 75%);
+}
+canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+main { position: relative; z-index: 1; max-width: 1060px; margin: 0 auto; padding: 0 24px; }
+
+nav {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 28px 0; font-family: var(--mono); font-size: 13px;
+}
+nav .logo { color: var(--blue-400); font-weight: 700; letter-spacing: 0.05em; }
+nav .logo span { color: var(--text-faint); }
+nav .links a {
+  color: var(--text-dim); text-decoration: none; margin-left: 28px;
+  transition: color .2s;
+}
+nav .links a:hover { color: var(--blue-200); }
+nav .links a::before { content: '/'; color: var(--text-faint); margin-right: 4px; }
+nav .links a.active { color: var(--blue-400); }
+
+.page-header { padding: 48px 0 40px; }
+.page-header .kicker {
+  font-family: var(--mono); font-size: 13px; color: var(--blue-400);
+  letter-spacing: 0.12em; margin-bottom: 14px;
+}
+.page-header .kicker::before { content: '> '; color: var(--text-faint); }
+.page-header h1 { font-size: clamp(28px, 5vw, 44px); font-weight: 600; color: #e8f0fa; letter-spacing: -0.02em; }
+.page-header p { margin-top: 12px; color: var(--text-dim); max-width: 560px; font-size: 15px; }
+
+.writeup-list { display: flex; flex-direction: column; gap: 20px; padding-bottom: 80px; }
+
+.writeup-card {
+  background: var(--bg-card); border: 1px solid var(--line-bright);
+  border-radius: 12px; overflow: hidden;
+  transition: border-color .25s;
+}
+.writeup-card:hover { border-color: var(--blue-600); }
+
+.writeup-card-header {
+  padding: 28px 32px 0;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: start;
+}
+.writeup-meta {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.writeup-meta .tag {
+  font-family: var(--mono); font-size: 11px; padding: 3px 9px;
+  border-radius: 4px; border: 1px solid;
+}
+.tag-infra { color: var(--blue-200); border-color: var(--blue-deep); }
+.tag-threat { color: #f0a04b; border-color: #7a4f1a; }
+.tag-cve { color: var(--red); border-color: #6b1f1f; background: rgba(226,75,74,0.06); }
+.writeup-date { font-family: var(--mono); font-size: 11px; color: var(--text-faint); }
+
+.writeup-card-header h2 {
+  font-size: 20px; font-weight: 600; color: #e8f0fa; margin-bottom: 8px; line-height: 1.3;
+}
+.writeup-card-header .summary { font-size: 14px; color: var(--text-dim); max-width: 680px; }
+
+.toggle-btn {
+  font-family: var(--mono); font-size: 12px; color: var(--blue-400);
+  border: 1px solid var(--blue-deep); border-radius: 6px; padding: 6px 14px;
+  background: transparent; cursor: pointer; white-space: nowrap; margin-top: 4px;
+  transition: background .2s;
+}
+.toggle-btn:hover { background: var(--blue-deep); color: #fff; }
+
+.writeup-body {
+  display: none; padding: 0 32px 32px; margin-top: 24px;
+}
+.writeup-body.open { display: block; }
+
+.writeup-body h3 {
+  font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--blue-400);
+  text-transform: uppercase; letter-spacing: 0.12em;
+  margin: 24px 0 10px;
+}
+.writeup-body h3:first-child { margin-top: 0; }
+.writeup-body p { font-size: 15px; color: var(--text-dim); margin-bottom: 12px; line-height: 1.8; }
+.writeup-body p strong { color: var(--text); font-weight: 500; }
+
+.cve-box {
+  background: var(--bg-raise); border: 1px solid #6b1f1f;
+  border-left: 3px solid var(--red);
+  border-radius: 8px; padding: 18px 22px; margin: 16px 0;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px;
+}
+.cve-field .label { font-family: var(--mono); font-size: 10px; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
+.cve-field .value { font-family: var(--mono); font-size: 14px; color: #e8f0fa; font-weight: 500; }
+.cve-field .value.red { color: var(--red); }
+
+.decision-box {
+  background: var(--bg-raise); border: 1px solid var(--line-bright);
+  border-left: 3px solid var(--blue-400);
+  border-radius: 8px; padding: 18px 22px; margin: 16px 0;
+}
+.decision-box p { margin: 0; font-size: 14px; }
+
+.outcome-row {
+  display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px;
+}
+.outcome-pill {
+  font-family: var(--mono); font-size: 12px;
+  background: rgba(55, 138, 221, 0.08);
+  border: 1px solid var(--blue-deep);
+  border-radius: 20px; padding: 5px 14px; color: var(--blue-200);
+}
+
+.divider { height: 1px; background: var(--line-bright); margin: 20px 0; }
+
+footer {
+  font-family: var(--mono); font-size: 12px; color: var(--text-faint);
+  text-align: center; padding: 30px 0 40px;
+}
+
+@media (max-width: 760px) {
+  nav .links a { margin-left: 16px; }
+  .writeup-card-header { grid-template-columns: 1fr; }
+  .writeup-card-header, .writeup-body { padding-left: 20px; padding-right: 20px; }
+}
+</style>
+</head>
+<body>
+<div class="gridlines"></div>
+<canvas id="traces"></canvas>
+<main>
+
+<nav>
+  <a href="index.html" class="logo">iCrypt0<span>@homelab:~$</span></a>
+  <div class="links">
+    <a href="index.html">about</a>
+    <a href="index.html#skills">skills</a>
+    <a href="index.html#lab">lab</a>
+    <a href="writeups.html" class="active">writeups</a>
+    <a href="index.html#contact">contact</a>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="kicker">lab decisions · threat research · real infrastructure</div>
+  <h1>writeups</h1>
+  <p>Real decisions made building and securing a home lab. Not tutorials — just how I think through problems and what I found along the way.</p>
+</div>
+
+<div class="writeup-list">
+
+  <div class="writeup-card">
+    <div class="writeup-card-header" onclick="toggle(this)">
+      <div>
+        <div class="writeup-meta">
+          <span class="tag tag-infra">infrastructure</span>
+          <span class="tag tag-threat">threat research</span>
+          <span class="tag tag-cve">CVE-2017-12754</span>
+          <span class="writeup-date">June 2026</span>
+        </div>
+        <h2>Why I Ditched Asuswrt-Merlin for a Dumb Switch</h2>
+        <p class="summary">I was planning to use Asuswrt-Merlin for VLAN segmentation in my home lab. A quick check of the firmware support status and one CVE later, I scrapped that plan entirely.</p>
+      </div>
+      <button class="toggle-btn">read more ↓</button>
+    </div>
+
+    <div class="writeup-body">
+      <div class="divider"></div>
+
+      <h3>The plan</h3>
+      <p>When I was setting up my home lab, I needed a way to segment traffic between my Proxmox host, personal devices, and the rest of the network. My first instinct was to flash <strong>Asuswrt-Merlin</strong> on my existing ASUS router and use it for VLAN management. Merlin is a well known third-party firmware fork that adds features the stock ASUS firmware doesn't have, and it seemed like the obvious choice for someone wanting more control without buying dedicated hardware.</p>
+
+      <h3>What I found first</h3>
+      <p>Before touching anything I looked up whether Merlin was still actively maintained for my device. It wasn't. My router model was on the end-of-life list, meaning no further security patches. That alone was a yellow flag, running an unpatched firewall component at the edge of a network you're trying to secure is counterproductive. But I kept digging.</p>
+
+      <h3>The CVE</h3>
+      <p>Searching for known vulnerabilities in the firmware version I would have been running turned up <strong>CVE-2017-12754</strong>.</p>
+
+      <div class="cve-box">
+        <div class="cve-field">
+          <div class="label">CVE ID</div>
+          <div class="value">CVE-2017-12754</div>
+        </div>
+        <div class="cve-field">
+          <div class="label">CVSS Score</div>
+          <div class="value red">8.8 High</div>
+        </div>
+        <div class="cve-field">
+          <div class="label">Published</div>
+          <div class="value">2017-08-09</div>
+        </div>
+        <div class="cve-field">
+          <div class="label">Type</div>
+          <div class="value">Stack Buffer Overflow</div>
+        </div>
+      </div>
+
+      <p>The vulnerability is a stack buffer overflow in the <strong>httpd</strong> daemon in Asuswrt-Merlin firmware 380.67 and earlier. A remote attacker can execute arbitrary code on the router by sending a crafted HTTP GET request with a long <code style="font-family:var(--mono);font-size:13px;color:var(--blue-200);background:var(--bg-raise);padding:2px 6px;border-radius:4px;">delete_offline_client</code> parameter in the URL. No authentication required. Remote code execution on the device sitting between your internal network and the internet.</p>
+
+      <p>The affected device list was long: RT-AC5300, RT-AC3200, RT-AC68U, RT-AC88U, RT-AC86U and others. My model was in that list. The firmware version was past end of life, meaning that CVE was sitting there unpatched with no fix coming.</p>
+
+      <h3>The decision</h3>
+      <div class="decision-box">
+        <p>Putting a device with a known, unpatched, remote code execution vulnerability in a network security role is not a network security decision. I swapped it out for a repurposed router running purely as a dumb switch, no firmware features, no httpd daemon, no attack surface. VLAN segmentation moved to OPNsense on Proxmox where it belongs.</p>
+      </div>
+
+      <h3>Outcome</h3>
+      <div class="outcome-row">
+        <span class="outcome-pill">CVE-2017-12754 mitigated</span>
+        <span class="outcome-pill">attack surface reduced</span>
+        <span class="outcome-pill">segmentation moved to OPNsense</span>
+        <span class="outcome-pill">dumb switch — no daemon, no exposure</span>
+      </div>
+
+      <p style="margin-top:18px;">This was a small decision in a home lab but the instinct behind it is the same one that matters in a production environment: verify before you deploy, check patch status, look for known CVEs, and don't trade convenience for exposure.</p>
+    </div>
+  </div>
+
+</div>
+
+<footer>iCrypt0 © 2026 · built from scratch, hosted on github pages</footer>
+
+</main>
+
+<script>
+(function () {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const canvas = document.getElementById('traces');
+  const ctx = canvas.getContext('2d');
+  const GRID = 56, TRAIL_LEN = 160;
+  const COLORS = ['#378add', '#185fa5', '#85b7eb'];
+  const RED = '#e24b4a';
+  const MAX_CYCLES = 5;
+  let cycles = [], sparks = [];
+
+  function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+  function snap(v) { return Math.round(v / GRID) * GRID; }
+
+  function spawn(isRed) {
+    const h = Math.random() < 0.5, d = Math.random() < 0.5 ? 1 : -1;
+    const x = h ? (d === 1 ? 0 : canvas.width) : snap(Math.random() * canvas.width);
+    const y = h ? snap(Math.random() * canvas.height) : (d === 1 ? 0 : canvas.height);
+    return { x, y, dx: h ? d : 0, dy: h ? 0 : d,
+      speed: isRed ? 3.8 : 2.2 + Math.random() * 2,
+      color: isRed ? RED : COLORS[Math.floor(Math.random() * COLORS.length)],
+      red: !!isRed, life: 0,
+      maxLife: isRed ? 300 + Math.random() * 200 : 400 + Math.random() * 400,
+      dying: false, trail: [{x, y}] };
+  }
+
+  function maybeTurn(c) {
+    const onX = Math.abs(c.x - snap(c.x)) < c.speed;
+    const onY = Math.abs(c.y - snap(c.y)) < c.speed;
+    if (onX && onY && Math.random() < 0.18) {
+      c.x = snap(c.x); c.y = snap(c.y);
+      if (c.dx !== 0) { c.dy = Math.random() < 0.5 ? 1 : -1; c.dx = 0; }
+      else { c.dx = Math.random() < 0.5 ? 1 : -1; c.dy = 0; }
+    }
+  }
+
+  function explode(x, y) {
+    for (let i = 0; i < 32; i++) {
+      const a = (Math.PI * 2 * i) / 32 + Math.random() * 0.4;
+      const sp = 1.5 + Math.random() * 4;
+      sparks.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp,
+        life: 1, size: 2 + Math.random() * 3,
+        color: Math.random() < 0.6 ? RED : '#85b7eb' });
+    }
+  }
+
+  function checkIntercept(red) {
+    for (const c of cycles) {
+      if (c.red) continue;
+      for (let i = 0; i < c.trail.length; i += 4) {
+        const p = c.trail[i], dx = red.x - p.x, dy = red.y - p.y;
+        if (dx * dx + dy * dy < 49) return true;
+      }
+    }
+    return false;
+  }
+
+  function tick() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    while (cycles.filter(c => !c.red).length < MAX_CYCLES) cycles.push(spawn(false));
+    if (cycles.filter(c => c.red).length < 2 && Math.random() < 0.012) cycles.push(spawn(true));
+
+    ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+    cycles.forEach(c => {
+      if (!c.dying) {
+        c.x += c.dx * c.speed; c.y += c.dy * c.speed; c.life++;
+        maybeTurn(c); c.trail.push({x: c.x, y: c.y});
+        if (c.trail.length > TRAIL_LEN) c.trail.shift();
+        if (c.red && checkIntercept(c)) { explode(c.x, c.y); c.dying = true; }
+        const off = c.x < -GRID || c.x > canvas.width + GRID || c.y < -GRID || c.y > canvas.height + GRID;
+        if (c.life >= c.maxLife || off) c.dying = true;
+      } else { c.trail.shift(); c.trail.shift(); }
+
+      ctx.strokeStyle = c.color; ctx.shadowColor = c.color; ctx.shadowBlur = 6;
+      for (let i = 1; i < c.trail.length; i++) {
+        ctx.globalAlpha = (i / c.trail.length) * 0.5;
+        ctx.beginPath(); ctx.moveTo(c.trail[i-1].x, c.trail[i-1].y);
+        ctx.lineTo(c.trail[i].x, c.trail[i].y); ctx.stroke();
+      }
+      ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+    });
+    cycles = cycles.filter(c => c.trail.length > 1);
+
+    sparks.forEach(s => {
+      s.x += s.vx; s.y += s.vy; s.vx *= 0.96; s.vy *= 0.96; s.life -= 0.025;
+      ctx.globalAlpha = Math.max(s.life, 0) * 0.9;
+      ctx.fillStyle = s.color; ctx.shadowColor = s.color; ctx.shadowBlur = 8;
+      ctx.fillRect(s.x - s.size/2, s.y - s.size/2, s.size, s.size);
+      ctx.shadowBlur = 0;
+    });
+    ctx.globalAlpha = 1;
+    sparks = sparks.filter(s => s.life > 0);
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+</script>
+
+<script>
+function toggle(header) {
+  const body = header.parentElement.querySelector('.writeup-body');
+  const btn = header.querySelector('.toggle-btn');
+  const open = body.classList.toggle('open');
+  btn.textContent = open ? 'close ↑' : 'read more ↓';
+}
+</script>
+</body>
+</html>
