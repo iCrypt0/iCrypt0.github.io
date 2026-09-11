@@ -250,18 +250,107 @@ footer {
 
       <h3>The decision</h3>
       <div class="decision-box">
-        <p>Putting a device with a known, unpatched, remote code execution vulnerability in a network security role is not a network security decision. I swapped it out for a repurposed router running purely as a dumb switch, no firmware features, no httpd daemon, no attack surface. VLAN segmentation moved to OPNsense on Proxmox where it belongs.</p>
+        <p>Putting a device with a known, unpatched, remote code execution vulnerability in a network security role is not a network security decision. I replaced it with a <strong>TP-Link TL-SG108E managed switch</strong> configured in a <strong>Router-on-a-Stick topology</strong>, with OPNsense on Proxmox handling all inter-VLAN routing. The managed switch handles 802.1Q VLAN tagging on the trunk port; OPNsense owns the routing logic and firewall rules between VLANs. No httpd daemon, no unpatched firmware sitting in the traffic path.</p>
       </div>
 
       <h3>Outcome</h3>
       <div class="outcome-row">
         <span class="outcome-pill">CVE-2017-12754 mitigated</span>
-        <span class="outcome-pill">attack surface reduced</span>
-        <span class="outcome-pill">segmentation moved to OPNsense</span>
-        <span class="outcome-pill">dumb switch — no daemon, no exposure</span>
+        <span class="outcome-pill">TP-Link TL-SG108E deployed</span>
+        <span class="outcome-pill">802.1Q VLANs configured</span>
+        <span class="outcome-pill">Router-on-a-Stick via OPNsense</span>
+        <span class="outcome-pill">attack surface eliminated</span>
       </div>
 
       <p style="margin-top:18px;">This was a small decision in a home lab but the instinct behind it is the same one that matters in a production environment: verify before you deploy, check patch status, look for known CVEs, and don't trade convenience for exposure.</p>
+    </div>
+  </div>
+
+  <!-- WRITEUP 2: pfSense decoder conflict -->
+  <div class="writeup-card">
+    <div class="writeup-card-header" onclick="toggle(this)">
+      <div>
+        <div class="writeup-meta">
+          <span class="tag tag-infra">infrastructure</span>
+          <span class="tag tag-threat">SIEM</span>
+          <span class="writeup-date">June 2026</span>
+        </div>
+        <h2>How I Found Out Wazuh's Built-in pfSense Ruleset Was Intercepting My OPNsense Firewall Logs</h2>
+        <p class="summary">Deployed custom OPNsense filterlog decoders in Wazuh only to find the built-in pfSense ruleset was catching the events first. Both firewalls use the same log format, so Wazuh's pfSense decoder matched OPNsense logs too. The fix was inheritance, not a rewrite.</p>
+      </div>
+      <button class="toggle-btn">read more ↓</button>
+    </div>
+    <div class="writeup-body">
+      <div class="divider"></div>
+      <h3>The goal</h3>
+      <p>OPNsense generates <strong>filterlog</strong> events — structured firewall log entries that include interface, action (pass/block), source IP, destination IP, protocol, and port. Out of the box, Wazuh doesn't fully parse these. I wanted proper field extraction so I could write meaningful alert rules against them — things like "alert when traffic from VLAN 10 hits VLAN 20" or "flag outbound connections on unusual ports."</p>
+      <p>The plan was straightforward: write a custom Wazuh decoder targeting OPNsense filterlog format and extract the fields I needed.</p>
+      <h3>What went wrong</h3>
+      <p>I wrote and deployed the custom decoder, restarted Wazuh, sent test traffic through OPNsense, and watched the logs. The events were arriving but my decoder was never firing. After digging, I found the cause: <strong>Wazuh rule 87700</strong>, part of Wazuh's built-in pfSense ruleset, was matching the events before my custom decoder had a chance to run.</p>
+      <p>Here's why: <strong>pfSense and OPNsense both use the same filterlog format.</strong> They share the same BSD firewall logging standard, so Wazuh's built-in pfSense decoder correctly matched my OPNsense logs too — it had no way to tell them apart because the log structure is identical. This isn't a bug, it's just a consequence of both firewalls sharing the same log format ancestry.</p>
+      <p>Wazuh's decoder matching is hierarchical — once a parent decoder claims an event, only child decoders under that parent get to run. My custom decoder was defined as a standalone rule, not a child of the pfSense decoder, so it was being bypassed entirely every time.</p>
+      <div class="cve-box" style="border-color: #1f3553; border-left-color: #378add;">
+        <div class="cve-field"><div class="label">Built-in rule</div><div class="value">87700 (pfSense)</div></div>
+        <div class="cve-field"><div class="label">Log type</div><div class="value">filterlog</div></div>
+        <div class="cve-field"><div class="label">Root cause</div><div class="value">Decoder conflict</div></div>
+        <div class="cve-field"><div class="label">Fix</div><div class="value">Parent inheritance</div></div>
+      </div>
+      <h3>The fix</h3>
+      <p>Instead of fighting the pfSense decoder, I worked with it. I updated my custom OPNsense rules to explicitly inherit from the pfSense parent decoder. Once my decoder was a child of rule 87700 rather than a standalone peer, Wazuh ran both in sequence — the parent matched the filterlog event (as it always had), and my child decoder then extracted the additional OPNsense-specific fields I needed on top of it.</p>
+      <div class="decision-box">
+        <p>The key lesson: when you're running OPNsense and Wazuh, you're not fighting the pfSense decoder — you're using it. Both firewalls produce the same filterlog format, so the built-in pfSense rules are your starting point, not your competition. Chain from them instead of trying to replace them.</p>
+      </div>
+      <h3>Outcome</h3>
+      <div class="outcome-row">
+        <span class="outcome-pill">filterlog fields extracted</span>
+        <span class="outcome-pill">custom decoder chained to pfSense parent</span>
+        <span class="outcome-pill">rule 87700 conflict resolved</span>
+        <span class="outcome-pill">OPNsense alerts firing correctly</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- WRITEUP 3: DHCP failure after relocation -->
+  <div class="writeup-card">
+    <div class="writeup-card-header" onclick="toggle(this)">
+      <div>
+        <div class="writeup-meta">
+          <span class="tag tag-infra">infrastructure</span>
+          <span class="tag tag-threat">troubleshooting</span>
+          <span class="writeup-date">June 2026</span>
+        </div>
+        <h2>Diagnosing a DHCP Failure After Moving My Firewall to a Closet</h2>
+        <p class="summary">Relocated the Beelink mini PC and lost DHCP across the entire network. Root cause was a NIC assignment mismatch in OPNsense. Diagnosis took direct hardware testing and ended in a full OPNsense reinstall after a FreeBSD PAM error blocked every password reset path.</p>
+      </div>
+      <button class="toggle-btn">read more ↓</button>
+    </div>
+    <div class="writeup-body">
+      <div class="divider"></div>
+      <h3>What happened</h3>
+      <p>After physically relocating the Beelink mini PC to a closet for cleaner cable management, every device on the network lost DHCP. Nothing would get an address. The internet was still reachable via a direct connection, but nothing downstream of OPNsense was working.</p>
+      <h3>Isolating the problem</h3>
+      <p>My first thought was a physical cable issue. I reseated everything and verified switch ports, but the problem persisted. The next step was to remove variables systematically.</p>
+      <p>I connected a laptop <strong>directly to the Beelink</strong>, bypassing the managed switch and the downstream router entirely. If DHCP worked at that point, the problem was downstream. If not, the problem was OPNsense or the NIC assignment itself.</p>
+      <p>DHCP still failed on the direct connection. That ruled out everything downstream. The problem was inside OPNsense.</p>
+      <h3>Root cause: NIC assignment mismatch</h3>
+      <p>When the Beelink was relocated and powered back up, the two NICs had swapped their assigned roles in OPNsense. What OPNsense had mapped as the WAN interface was now physically connected to the LAN port, and vice versa. OPNsense was trying to hand out DHCP leases on what it thought was the LAN interface, but that interface was facing the wrong direction.</p>
+      <p>This is a known gotcha with mini PCs that have two identical NICs — there's no guarantee the OS enumerates them in the same order after a power cycle or physical move.</p>
+      <h3>Why a simple fix didn't work</h3>
+      <p>The straightforward fix would have been to log into OPNsense and reassign the NIC roles through the interface assignments page. But a <strong>FreeBSD PAM error</strong> was blocking every password reset attempt. The OPNsense shell is FreeBSD under the hood, and the PAM (Pluggable Authentication Module) error prevented the standard recovery paths from completing. Boot-time password reset options were also blocked in the state the VM was in.</p>
+      <div class="decision-box">
+        <p>At a certain point, time spent chasing a recovery path on a broken system exceeds the time it would take to redeploy cleanly. I wiped the OPNsense VM and reinstalled from a fresh ISO mounted in Proxmox.</p>
+      </div>
+      <h3>The reinstall</h3>
+      <p>Mounting the OPNsense ISO through Proxmox's virtual CD drive and booting from it was clean. During initial setup I carefully verified which physical NIC was WAN and which was LAN before confirming the interface assignments — exactly the step that caused the problem the first time. DHCP came back immediately on the first test. Reconfiguring VLAN setup, firewall rules, and syslog forwarding back to Wazuh took additional time, but everything was documented from the original build.</p>
+      <h3>Outcome</h3>
+      <div class="outcome-row">
+        <span class="outcome-pill">NIC mismatch identified</span>
+        <span class="outcome-pill">OPNsense reinstalled via Proxmox ISO</span>
+        <span class="outcome-pill">DHCP restored</span>
+        <span class="outcome-pill">VLAN + firewall rules reconfigured</span>
+        <span class="outcome-pill">syslog forwarding re-established</span>
+      </div>
+      <p style="margin-top:18px;">The bigger lesson: document your interface assignments at build time. A label on the physical cable or a note with which MAC address corresponds to which role takes 30 seconds and would have made this a 2-minute fix instead of a full reinstall.</p>
     </div>
   </div>
 
