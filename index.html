@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -37,7 +37,7 @@ body {
   overflow-x: hidden;
 }
 ::selection { background: var(--blue-deep); color: #fff; }
-
+ 
 /* grid backdrop */
 .gridlines {
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
@@ -49,9 +49,9 @@ body {
   mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, black 0%, transparent 75%);
   -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, black 0%, transparent 75%);
 }
-
+ 
 main { position: relative; z-index: 1; max-width: 1060px; margin: 0 auto; padding: 0 24px; }
-
+ 
 /* nav */
 nav {
   display: flex; justify-content: space-between; align-items: center;
@@ -65,7 +65,7 @@ nav .links a {
 }
 nav .links a:hover { color: var(--blue-200); }
 nav .links a::before { content: '/'; color: var(--text-faint); margin-right: 4px; }
-
+ 
 /* hero */
 .hero { padding: 64px 0 24px; }
 .hero .kicker {
@@ -87,7 +87,7 @@ nav .links a::before { content: '/'; color: var(--text-faint); margin-right: 4px
   animation: blink 1.1s steps(1) infinite;
 }
 @keyframes blink { 50% { opacity: 0; } }
-
+ 
 /* lab topology — signature element */
 .topo-wrap { padding: 40px 0 10px; }
 .topo-label {
@@ -106,7 +106,7 @@ nav .links a::before { content: '/'; color: var(--text-faint); margin-right: 4px
   background: var(--bg-raise); overflow: hidden;
 }
 .topo svg { display: block; width: 100%; height: auto; }
-
+ 
 /* sections */
 section { padding: 72px 0 8px; }
 .sec-head {
@@ -115,7 +115,7 @@ section { padding: 72px 0 8px; }
 }
 .sec-head::before { content: attr(data-n); color: var(--text-faint); font-size: 12px; }
 .sec-head::after { content: ''; flex: 1; height: 1px; background: var(--line-bright); }
-
+ 
 /* about */
 .about-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 48px; }
 .about-grid p { color: var(--text-dim); margin-bottom: 16px; }
@@ -127,7 +127,7 @@ section { padding: 72px 0 8px; }
 }
 .facts .k { color: var(--text-faint); }
 .facts .v { color: var(--blue-200); text-align: right; }
-
+ 
 /* skills */
 .skill-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
 .skill-card {
@@ -148,7 +148,7 @@ section { padding: 72px 0 8px; }
   content: ''; width: 5px; height: 5px; background: var(--blue-400);
   transform: rotate(45deg); flex-shrink: 0;
 }
-
+ 
 /* lab detail */
 .lab-rows { display: flex; flex-direction: column; gap: 12px; }
 .lab-row {
@@ -164,7 +164,7 @@ section { padding: 72px 0 8px; }
   border: 1px solid var(--blue-deep); border-radius: 4px; padding: 3px 9px;
   white-space: nowrap;
 }
-
+ 
 /* contact */
 .contact-box {
   background: var(--bg-card); border: 1px solid var(--line-bright); border-radius: 12px;
@@ -179,12 +179,12 @@ section { padding: 72px 0 8px; }
   padding: 11px 22px; transition: background .2s, color .2s;
 }
 .contact-links a:hover { background: var(--blue-deep); color: #fff; }
-
+ 
 footer {
   font-family: var(--mono); font-size: 12px; color: var(--text-faint);
   text-align: center; padding: 30px 0 40px;
 }
-
+ 
 @media (max-width: 760px) {
   .about-grid { grid-template-columns: 1fr; }
   .lab-row { grid-template-columns: 1fr; gap: 6px; }
@@ -204,7 +204,7 @@ footer {
 <div class="gridlines"></div>
 <canvas id="traces" style="position:fixed;inset:0;z-index:0;pointer-events:none;"></canvas>
 <main>
-
+ 
 <nav>
   <div class="logo">iCrypt0<span>@homelab:~$</span></div>
   <div class="links">
@@ -215,13 +215,13 @@ footer {
     <a href="#contact">contact</a>
   </div>
 </nav>
-
+ 
 <div class="hero">
   <div class="kicker">chandler — north georgia</div>
   <h1>i learn by <em><span id="rotator">patterns</span></em><span class="cursor"></span></h1>
   <p class="sub">IT student at Kennesaw State, A.S. in Cybersecurity from Lanier Tech.</p>
 </div>
-
+ 
 <div class="topo-wrap">
   <div class="topo-label"><b>lab status: online</b> &nbsp;·&nbsp; live network topology</div>
   <div class="topo">
@@ -232,55 +232,55 @@ footer {
           <stop offset="100%" stop-color="#185fa5" stop-opacity="0"/>
         </radialGradient>
       </defs>
-
+ 
       <path id="p1" d="M 100 220 L 195 220" stroke="#1f3553" stroke-width="2" fill="none"/>
       <path id="p2" d="M 455 220 L 545 220" stroke="#1f3553" stroke-width="2" fill="none"/>
       <path id="p3" d="M 645 220 L 730 220" stroke="#1f3553" stroke-width="2" fill="none"/>
       <path id="p4" d="M 825 185 Q 855 130 890 105" stroke="#1f3553" stroke-width="2" fill="none"/>
       <path id="p5" d="M 825 255 Q 855 310 890 335" stroke="#1f3553" stroke-width="1.5" stroke-dasharray="5 5" fill="none"/>
       <path id="p6" d="M 730 255 Q 700 320 645 345" stroke="#1f3553" stroke-width="1.5" stroke-dasharray="5 5" fill="none"/>
-
+ 
       <circle cx="100" cy="220" r="58" fill="url(#nodeGlow)"/>
       <circle cx="100" cy="220" r="32" fill="#0a1322" stroke="#378add" stroke-width="1.5"/>
       <text x="100" y="225" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#85b7eb">WAN</text>
       <text x="100" y="277" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#6b7f99">isp</text>
-
+ 
       <rect x="195" y="105" width="260" height="230" rx="10" fill="#0a1322" stroke="#378add" stroke-width="1.5"/>
       <text x="325" y="133" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#85b7eb">Proxmox · beelink</text>
       <line x1="215" y1="148" x2="435" y2="148" stroke="#1f3553" stroke-width="1"/>
-
+ 
       <rect x="215" y="165" width="220" height="44" rx="6" fill="#0d1726" stroke="#185fa5" stroke-width="1.5"/>
       <text x="325" y="184" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#b5d4f4">OPNsense</text>
       <text x="325" y="200" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#6b7f99">edge firewall · gateway</text>
-
+ 
       <rect x="215" y="219" width="220" height="44" rx="6" fill="#0d1726" stroke="#185fa5" stroke-width="1.5"/>
       <text x="325" y="238" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#b5d4f4">Wazuh</text>
       <text x="325" y="254" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#6b7f99">SIEM vm</text>
-
+ 
       <rect x="215" y="273" width="220" height="44" rx="6" fill="#0d1726" stroke="#185fa5" stroke-width="1.5"/>
       <text x="325" y="292" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#b5d4f4">honeypot</text>
       <text x="325" y="308" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#6b7f99">threat intel vm</text>
-
+ 
       <rect x="545" y="190" width="100" height="60" rx="8" fill="#0d1726" stroke="#378add" stroke-width="1.5"/>
       <text x="595" y="216" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#b5d4f4">switch</text>
       <text x="595" y="234" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#6b7f99">repurposed router</text>
-
+ 
       <rect x="730" y="190" width="95" height="60" rx="8" fill="#0d1726" stroke="#378add" stroke-width="1.5"/>
       <text x="777" y="216" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#b5d4f4">router</text>
       <text x="777" y="234" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#6b7f99">lan + wifi</text>
-
+ 
       <rect x="890" y="62" width="95" height="56" rx="8" fill="#0d1726" stroke="#185fa5" stroke-width="1.5"/>
       <text x="937" y="86" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#b5d4f4">PC</text>
       <text x="937" y="103" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#6b7f99">ethernet · agent</text>
-
+ 
       <rect x="890" y="318" width="95" height="56" rx="8" fill="#0d1726" stroke="#185fa5" stroke-width="1.5"/>
       <text x="937" y="342" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#b5d4f4">laptop</text>
       <text x="937" y="359" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#6b7f99">wifi · agent</text>
-
+ 
       <rect x="545" y="318" width="110" height="56" rx="8" fill="#0a1322" stroke="#3d4f66" stroke-width="1.5" stroke-dasharray="6 4"/>
       <text x="600" y="342" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#6b7f99">pi dashboard</text>
       <text x="600" y="359" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#3d4f66">planned · wall mount</text>
-
+ 
       <circle class="packet" r="4" fill="#378add">
         <animateMotion dur="2.4s" repeatCount="indefinite"><mpath href="#p1"/></animateMotion>
       </circle>
@@ -296,26 +296,25 @@ footer {
     </svg>
   </div>
 </div>
-
+ 
 <section id="about">
   <div class="sec-head" data-n="01">about</div>
   <div class="about-grid">
     <div>
       <p>Always loved tech growing up — as a kid I was fixing the router, picking the hacker class in every co-op game, figuring out how things work just to see if I could and because it was fun.</p>
-      <p>Now I'm studying <strong>IT at Kennesaw State</strong> after finishing an <strong>A.S. in Cybersecurity at Lanier Tech</strong>, working toward Security+ and building out a home lab that I treat like a production network.</p>
+      <p>Now I'm studying <strong>IT at Kennesaw State</strong> after finishing an <strong>A.S. in Cybersecurity at Lanier Tech</strong>, building out a home lab that I treat like a production network.</p>
       <p>I learn by patterns and puzzles. Cybersecurity clicked because that's the whole job: figure out how the system works, find where it's weak, solve it.</p>
     </div>
     <div class="facts">
       <div><span class="k">degree</span><span class="v">B.A.S. IT — KSU</span></div>
       <div><span class="k">prior</span><span class="v">A.S. Cybersecurity</span></div>
-      <div><span class="k">cert path</span><span class="v">Security+ (in progress)</span></div>
       <div><span class="k">practice</span><span class="v">TryHackMe / CTFs</span></div>
       <div><span class="k">grad target</span><span class="v">Fall 2027</span></div>
       <div><span class="k">location</span><span class="v">north georgia</span></div>
     </div>
   </div>
 </section>
-
+ 
 <section id="skills">
   <div class="sec-head" data-n="02">skills</div>
   <div class="skill-cols">
@@ -325,6 +324,8 @@ footer {
         <li>Wazuh SIEM</li>
         <li>honeypot deployment</li>
         <li>network segmentation</li>
+        <li>custom SIEM decoders</li>
+        <li>syslog forwarding</li>
         <li>TryHackMe labs</li>
       </ul>
     </div>
@@ -334,7 +335,8 @@ footer {
         <li>Proxmox VE</li>
         <li>OPNsense</li>
         <li>Linux administration</li>
-        <li>VLANs + firewall rules</li>
+        <li>802.1Q VLANs · Router-on-a-Stick</li>
+        <li>managed switch config (TP-Link TL-SG108E)</li>
       </ul>
     </div>
     <div class="skill-card">
@@ -348,7 +350,7 @@ footer {
     </div>
   </div>
 </section>
-
+ 
 <section id="lab">
   <div class="sec-head" data-n="03">home lab</div>
   <div class="lab-rows">
@@ -374,12 +376,12 @@ footer {
     </div>
   </div>
 </section>
-
+ 
 <section id="contact">
   <div class="sec-head" data-n="04">contact</div>
   <div class="contact-box">
     <h2>let's connect</h2>
-    <p>Open to help desk, SOC analyst, and IT support opportunities in the Metro Atlanta area. Always down to talk home labs.</p>
+    <p>Open to help desk, SOC analyst, and IT support opportunities in the Metro Atlanta area.</p>
     <div class="contact-links">
       <a href="https://github.com/iCrypt0" target="_blank" rel="noopener">github</a>
       <a href="https://www.linkedin.com/in/chandlerkirk" target="_blank" rel="noopener">linkedin</a>
