@@ -284,7 +284,7 @@ footer {
 
       <p style="margin-top:18px;">This was a small decision in a home lab but the instinct behind it is the same one that matters in a production environment: verify before you deploy, check patch status, look for known CVEs, and don't trade convenience for exposure.</p>
       <div class="screenshot-wrap" style="margin-top:20px;">
-        <img src="assets/proxmox-summary.png" alt="Proxmox VE 9.2.2 showing four VMs running on node atlas: OPNsense-FW, Hermes, Ares, and Dragonwild, with uptime and resource usage" loading="lazy">
+        <img src="proxmox-summary.png" alt="Proxmox VE 9.2.2 showing four VMs running on node atlas: OPNsense-FW, Hermes, Ares, and Dragonwild, with uptime and resource usage" loading="lazy">
         <div class="screenshot-caption">Proxmox node atlas — OPNsense-FW, Hermes (Wazuh), Ares, and Dragonwild all running with 4+ days uptime. This is what replaced the Merlin firmware setup.</div>
       </div>
     </div>
@@ -332,7 +332,7 @@ footer {
         <span class="outcome-pill">OPNsense alerts firing correctly</span>
       </div>
       <div class="screenshot-wrap" style="margin-top:20px;">
-        <img src="assets/wazuh-dashboard.png" alt="Wazuh dashboard showing 98,036 daily firewall alerts from OPNsense with top destination ports and IP breakdown" loading="lazy">
+        <img src="wazuh-dashboard.png" alt="Wazuh dashboard showing 98,036 daily firewall alerts from OPNsense with top destination ports and IP breakdown" loading="lazy">
         <div class="screenshot-caption">Wazuh dashboard — 98,036 OPNsense filterlog events processed in 24 hours after decoder fix. Port 53 (DNS) and port 6 lead traffic, with 75% UDP.</div>
       </div>
     </div>
@@ -371,7 +371,7 @@ footer {
       <h3>The reinstall</h3>
       <p>Mounting the OPNsense ISO through Proxmox's virtual CD drive and booting from it was clean. During initial setup I carefully verified which physical NIC was WAN and which was LAN before confirming the interface assignments — exactly the step that caused the problem the first time. DHCP came back immediately on the first test. Reconfiguring VLAN setup, firewall rules, and syslog forwarding back to Wazuh took additional time, but everything was documented from the original build.</p>
       <div class="screenshot-wrap">
-        <img src="assets/opnsense-dashboard.png" alt="OPNsense dashboard showing Aegis.internal running with 4 days uptime, active WAN and LAN interfaces, live traffic graphs, and all services running" loading="lazy">
+        <img src="opnsense-dashboard.png" alt="OPNsense dashboard showing Aegis.internal running with 4 days uptime, active WAN and LAN interfaces, live traffic graphs, and all services running" loading="lazy">
         <div class="screenshot-caption">OPNsense (Aegis.internal) post-reinstall — 4 days uptime, WAN and LAN both active, all core services running. Traffic graphs confirm normal flow.</div>
       </div>
       <h3>Outcome</h3>
