@@ -216,80 +216,51 @@ footer {
   <p>Real decisions made building and securing a home lab. Not tutorials — just how I think through problems and what I found along the way.</p>
 </div>
 
-<div class="writeup-list">
-
-  <div class="writeup-card">
-    <div class="writeup-card-header" onclick="toggle(this)">
-      <div>
-        <div class="writeup-meta">
-          <span class="tag tag-infra">infrastructure</span>
-          <span class="tag tag-threat">threat research</span>
-          <span class="tag tag-cve">CVE-2017-12754</span>
-          <span class="writeup-date">June 2026</span>
-        </div>
-        <h2>Why I Ditched Asuswrt-Merlin for a Dumb Switch</h2>
-        <p class="summary">I was planning to use Asuswrt-Merlin for VLAN segmentation in my home lab. A quick check of the firmware support status and one CVE later, I scrapped that plan entirely.</p>
+<div class="writeup-card">
+  <div class="writeup-card-header" onclick="toggle(this)">
+    <div>
+      <div class="writeup-meta">
+        <span class="tag tag-infra">infrastructure</span>
+        <span class="tag tag-infra">VLAN</span>
+        <span class="writeup-date">June 2026</span>
       </div>
-      <button class="toggle-btn">read more ↓</button>
+      <h2>Why I Ditched Asuswrt-Merlin and Got a Real Switch</h2>
+      <p class="summary">I was planning to repurpose an ASUS RT-AC3100 with Asuswrt-Merlin firmware to handle VLAN segmentation in my home lab. Merlin was the only way to get VLANs on that hardware — and Merlin was no longer supported for that device. That dead end led me to buy a proper managed switch instead.</p>
     </div>
-
-    <div class="writeup-body">
-      <div class="divider"></div>
-
-      <h3>The plan</h3>
-      <p>When I was setting up my home lab, I needed a way to segment traffic between my Proxmox host, personal devices, and the rest of the network. My first instinct was to flash <strong>Asuswrt-Merlin</strong> on my existing ASUS router and use it for VLAN management. Merlin is a well known third-party firmware fork that adds features the stock ASUS firmware doesn't have, and it seemed like the obvious choice for someone wanting more control without buying dedicated hardware.</p>
-
-      <h3>What I found first</h3>
-      <p>Before touching anything I looked up whether Merlin was still actively maintained for my device. It wasn't. My router model was on the end-of-life list, meaning no further security patches. That alone was a yellow flag, running an unpatched firewall component at the edge of a network you're trying to secure is counterproductive. But I kept digging.</p>
-
-      <h3>The CVE</h3>
-      <p>Searching for known vulnerabilities in the firmware version I would have been running turned up <strong>CVE-2017-12754</strong>.</p>
-
-      <div class="cve-box">
-        <div class="cve-field">
-          <div class="label">CVE ID</div>
-          <div class="value">CVE-2017-12754</div>
-        </div>
-        <div class="cve-field">
-          <div class="label">CVSS Score</div>
-          <div class="value red">8.8 High</div>
-        </div>
-        <div class="cve-field">
-          <div class="label">Published</div>
-          <div class="value">2017-08-09</div>
-        </div>
-        <div class="cve-field">
-          <div class="label">Type</div>
-          <div class="value">Stack Buffer Overflow</div>
-        </div>
-      </div>
-
-      <p>The vulnerability is a stack buffer overflow in the <strong>httpd</strong> daemon in Asuswrt-Merlin firmware 380.67 and earlier. A remote attacker can execute arbitrary code on the router by sending a crafted HTTP GET request with a long <code style="font-family:var(--mono);font-size:13px;color:var(--blue-200);background:var(--bg-raise);padding:2px 6px;border-radius:4px;">delete_offline_client</code> parameter in the URL. No authentication required. Remote code execution on the device sitting between your internal network and the internet.</p>
-
-      <p>The affected device list was long: RT-AC5300, RT-AC3200, RT-AC68U, RT-AC88U, RT-AC86U and others. My model was in that list. The firmware version was past end of life, meaning that CVE was sitting there unpatched with no fix coming.</p>
-
-      <h3>The decision</h3>
-      <div class="decision-box">
-        <p>Putting a device with a known, unpatched, remote code execution vulnerability in a network security role is not a network security decision. I replaced it with a <strong>TP-Link TL-SG108E managed switch</strong> configured in a <strong>Router-on-a-Stick topology</strong>, with OPNsense on Proxmox handling all inter-VLAN routing. The managed switch handles 802.1Q VLAN tagging on the trunk port; OPNsense owns the routing logic and firewall rules between VLANs. No httpd daemon, no unpatched firmware sitting in the traffic path.</p>
-      </div>
-
-      <h3>Outcome</h3>
-      <div class="outcome-row">
-        <span class="outcome-pill">CVE-2017-12754 mitigated</span>
-        <span class="outcome-pill">TP-Link TL-SG108E deployed</span>
-        <span class="outcome-pill">802.1Q VLANs configured</span>
-        <span class="outcome-pill">Router-on-a-Stick via OPNsense</span>
-        <span class="outcome-pill">attack surface eliminated</span>
-      </div>
-
-      <p style="margin-top:18px;">This was a small decision in a home lab but the instinct behind it is the same one that matters in a production environment: verify before you deploy, check patch status, look for known CVEs, and don't trade convenience for exposure.</p>
-      <div class="screenshot-wrap" style="margin-top:20px;">
-        <img src="proxmox-summary.png" alt="Proxmox VE 9.2.2 showing four VMs running on node atlas: OPNsense-FW, Hermes, Ares, and Dragonwild, with uptime and resource usage" loading="lazy">
-        <div class="screenshot-caption">Proxmox node atlas — OPNsense-FW, Hermes (Wazuh), Ares, and Dragonwild all running with 4+ days uptime. This is what replaced the Merlin firmware setup.</div>
-      </div>
-    </div>
+    <button class="toggle-btn">read more ↓</button>
   </div>
 
+  <div class="writeup-body">
+    <div class="divider"></div>
+
+    <h3>The plan</h3>
+    <p>When I was designing my home lab network, I needed a way to segment traffic between my Proxmox host, personal devices, and the rest of the network using <strong>802.1Q VLANs</strong>. I had an <strong>ASUS RT-AC3100</strong> sitting around and figured I could repurpose it as a VLAN-capable switch. The stock ASUS firmware doesn't support VLANs, but <strong>Asuswrt-Merlin</strong> — a popular third-party firmware fork — does. Flashing Merlin seemed like a free way to get VLAN support without buying new hardware.</p>
+
+    <h3>Why it didn't work out</h3>
+    <p>Two things killed the plan. First, Merlin is no longer maintained for the RT-AC3100 — the device is past its support lifecycle. Running an unsupported firmware fork on a network device means no security patches and no recourse when something breaks. Second, even putting the EOL issue aside, using a consumer router as a switch just wasn't working the way I needed it to. The VLAN behavior wasn't clean, and I kept running into limitations that a real switch wouldn't have.</p>
+    <p>At a certain point it became clear I was trying to force a router into a role it wasn't built for, with firmware that was no longer being maintained. That's two problems compounding each other.</p>
+
+    <h3>The decision</h3>
+    <div class="decision-box">
+      <p>I picked up a <strong>TP-Link TL-SG108E managed switch</strong> — hardware purpose-built for 802.1Q VLAN tagging. It handles trunk and access port configuration the way it's supposed to, requires no third-party firmware, and is actively supported. OPNsense on Proxmox handles all inter-VLAN routing through a Router-on-a-Stick configuration. The right tool for the job made the whole thing straightforward.</p>
+    </div>
+
+    <h3>Outcome</h3>
+    <div class="outcome-row">
+      <span class="outcome-pill">TP-Link TL-SG108E deployed</span>
+      <span class="outcome-pill">802.1Q VLANs configured</span>
+      <span class="outcome-pill">Router-on-a-Stick via OPNsense</span>
+      <span class="outcome-pill">no unsupported firmware in the path</span>
+    </div>
+
+    <p style="margin-top:18px;">Sometimes the budget move costs more time than it saves. A $30 managed switch solved cleanly what an old router and unsupported firmware couldn't.</p>
+
+    <div class="screenshot-wrap" style="margin-top:20px;">
+      <img src="proxmox-summary.png" alt="Proxmox VE 9.2.2 showing four VMs running on node atlas: OPNsense-FW, Hermes, Ares, and Dragonwild, with uptime and resource usage" loading="lazy">
+      <div class="screenshot-caption">Proxmox node atlas — OPNsense-FW, Hermes (Wazuh), Ares, and Dragonwild all running with 4+ days uptime. The TP-Link TL-SG108E managed switch replaced the second Asus router that would have run Merlin.</div>
+    </div>
+  </div>
+</div>
   <!-- WRITEUP 2: pfSense decoder conflict -->
   <div class="writeup-card">
     <div class="writeup-card-header" onclick="toggle(this)">
