@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Logbook · icrypt0</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #050a14;
+  --bg-card: #0d1726;
+  --bg-raise: #0a1322;
+  --line: #16243a;
+  --line-bright: #1f3553;
+  --blue-400: #378add;
+  --blue-600: #185fa5;
+  --blue-200: #85b7eb;
+  --blue-100: #b5d4f4;
+  --cyan: #06b6d4;
+  --text: #c4d3e6;
+  --text-dim: #6b7f99;
+  --text-faint: #3d4f66;
+  --v10: #378add;
+  --v20: #f87171;
+  --v30: #a78bfa;
+  --v40: #fb923c;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Inter', sans-serif;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+    --bg: #eef3fb;
+    --bg-card: #ffffff;
+    --bg-raise: #e2ecf8;
+    --line: #b8cfe8;
+    --line-bright: #b8cfe8;
+    --text: #14243c;
+    --text-dim: #486080;
+    --text-faint: #8099b8;
+    --cyan: #0891b2;
+  }
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #eef3fb;
+  --bg-card: #ffffff;
+  --bg-raise: #e2ecf8;
+  --line: #b8cfe8;
+  --line-bright: #b8cfe8;
+  --text: #14243c;
+  --text-dim: #486080;
+  --text-faint: #8099b8;
+  --cyan: #0891b2;
+}
+ 
+* { margin: 0; padding: 0; box-sizing: border-box; }
+ 
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  min-height: 100vh;
+}
+ 
+/* ── NAV ── */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 max(24px, env(safe-area-inset-left, 0px));
+  height: 52px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+.nav-brand {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--blue-400);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+}
+.nav-links { display: flex; gap: 28px; list-style: none; }
+.nav-links a {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  text-decoration: none;
+  letter-spacing: 0.06em;
+  transition: color 0.15s;
+}
+.nav-links a:hover,
+.nav-links a.active { color: var(--text); }
+ 
+/* ── PAGE SHELL ── */
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 56px max(24px, env(safe-area-inset-left, 0px)) 80px;
+}
+ 
+/* ── PAGE HEADER ── */
+.page-header { margin-bottom: 56px; }
+.kicker {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--blue-400);
+  letter-spacing: 0.14em;
+  margin-bottom: 14px;
+}
+.kicker::before { content: '> '; color: var(--text-faint); }
+.page-title {
+  font-size: clamp(24px, 5vw, 36px);
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  margin-bottom: 10px;
+  line-height: 1.2;
+}
+.page-desc {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.65;
+  max-width: 580px;
+}
+ 
+/* ── SECTION ── */
+.lb-section { margin-bottom: 72px; }
+ 
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.section-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-faint);
+  letter-spacing: 0.1em;
+}
+.section-divider {
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+}
+.section-intro {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.65;
+  max-width: 640px;
+  margin-bottom: 28px;
+}
+ 
+/* ── EVIDENCE CARDS ── */
+.evidence-stack { display: flex; flex-direction: column; gap: 24px; }
+.evidence-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media (max-width: 680px) { .evidence-pair { grid-template-columns: 1fr; } }
+ 
+.ev-card {
+  background: var(--bg-card);
+  border: 1px solid var(--line-bright);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.ev-img-wrap {
+  width: 100%;
+  overflow-x: auto;
+  background: var(--bg-raise);
+  border-bottom: 1px solid var(--line);
+}
+.ev-img-wrap img {
+  display: block;
+  width: 100%;
+  min-width: 480px;
+  height: auto;
+}
+.ev-body { padding: 16px 18px; }
+.ev-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--blue-200);
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+.ev-caption {
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+.ev-caption code {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--cyan);
+  background: var(--bg-raise);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+ 
+/* highlight pill */
+.ev-tag {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  padding: 2px 8px;
+  border-radius: 20px;
+  margin-left: 6px;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
+}
+.ev-tag.red   { background: rgba(248,113,113,0.12); color: #f87171; border: 1px solid rgba(248,113,113,0.25); }
+.ev-tag.blue  { background: rgba(55,138,221,0.12); color: var(--blue-400); border: 1px solid rgba(55,138,221,0.25); }
+.ev-tag.green { background: rgba(74,222,128,0.1); color: #4ade80; border: 1px solid rgba(74,222,128,0.2); }
+ 
+/* ── INCIDENT TIMELINE SEQUENCE ── */
+.sequence-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-faint);
+  letter-spacing: 0.1em;
+  margin-bottom: 10px;
+}
+ 
+</style>
+</head>
+<body>
+ 
+<nav>
+  <a href="index.html" class="nav-brand">icrypt0</a>
+  <ul class="nav-links">
+    <li><a href="index.html">home</a></li>
+    <li><a href="index.html#projects">projects</a></li>
+    <li><a href="logbook.html" class="active">logbook</a></li>
+  </ul>
+</nav>
+ 
+<div class="page">
+ 
+  <div class="page-header">
+    <div class="kicker">lab documentation</div>
+    <h1 class="page-title">Logbook</h1>
+    <p class="page-desc">
+      Evidence from a self-hosted VLAN-segmented home lab running a production-grade
+      honeypot, SIEM, and firewall stack. Everything here is captured from real traffic
+      hitting a live environment.
+    </p>
+  </div>
+ 
+  <!-- ══════════════════════════════════════════
+       SECTION 1: LAB INFRASTRUCTURE
+  ══════════════════════════════════════════ -->
+  <section class="lb-section">
+    <div class="section-label">
+      <span class="section-num">01</span>
+      <div class="section-divider"></div>
+    </div>
+    <h2 class="section-title">Lab Infrastructure</h2>
+    <p class="section-intro">
+      The entire stack runs on a single physical host. Building it from scratch —
+      rather than using a managed service — means owning every configuration decision,
+      from hypervisor to VLAN tagging to firewall policy.
+    </p>
+ 
+    <div class="evidence-stack">
+      <div class="evidence-pair">
+ 
+        <div class="ev-card">
+          <div class="ev-img-wrap">
+            <img src="proxmox-vms.png" alt="Proxmox VE VM inventory showing five VMs" loading="lazy">
+          </div>
+          <div class="ev-body">
+            <div class="ev-title">PROXMOX VE · VM INVENTORY</div>
+            <p class="ev-caption">
+              Five VMs running concurrently on a single physical host: the OPNsense
+              firewall, Wazuh SIEM manager, Cowrie honeypot, and supporting services.
+              Uptime across the board confirms persistent operation, not a one-time demo.
+            </p>
+          </div>
+        </div>
+ 
+        <div class="ev-card">
+          <div class="ev-img-wrap">
+            <img src="switch-vlan-config.png" alt="TL-SG108E 802.1Q VLAN configuration table" loading="lazy">
+          </div>
+          <div class="ev-body">
+            <div class="ev-title">802.1Q VLAN CONFIG · MANAGED SWITCH</div>
+            <p class="ev-caption">
+              VLANs 10 (Trusted), 20 (Honeypot), 30 (Management), and 40 (IoT) defined
+              with explicit tagged/untagged port assignments. Port 1 carries the trunk to
+              the router; each downstream port lands on exactly one VLAN.
+            </p>
+          </div>
+        </div>
+ 
+      </div>
+    </div>
+  </section>
+ 
+  <!-- ══════════════════════════════════════════
+       SECTION 2: NETWORK SECURITY ARCHITECTURE
+  ══════════════════════════════════════════ -->
+  <section class="lb-section">
+    <div class="section-label">
+      <span class="section-num">02</span>
+      <div class="section-divider"></div>
+    </div>
+    <h2 class="section-title">Network Security Architecture</h2>
+    <p class="section-intro">
+      Every rule in the firewall was written intentionally. Inbound SSH is redirected to
+      the honeypot via NAT. The Trusted VLAN is explicitly blocked from reaching the
+      Honeypot network. These aren't defaults — they're design decisions you can read
+      directly from the ruleset.
+    </p>
+ 
+    <div class="evidence-stack">
+ 
+      <div class="ev-card">
+        <div class="ev-img-wrap">
+          <img src="opnsense-fw-rules.png" alt="OPNsense firewall rules showing deliberate segmentation" loading="lazy">
+        </div>
+        <div class="ev-body">
+          <div class="ev-title">OPNSENSE · FIREWALL RULES</div>
+          <p class="ev-caption">
+            The ruleset shows deliberate segmentation: inbound SSH from WAN is passed
+            to the honeypot, Trusted network is explicitly blocked from reaching
+            Honeypot network, and a separate rule gates admin access to the Cowrie
+            VM on a non-standard port. Rule descriptions are written to be auditable.
+          </p>
+        </div>
+      </div>
+ 
+      <div class="ev-card">
+        <div class="ev-img-wrap">
+          <img src="opnsense-fw-logs.png" alt="OPNsense live firewall log showing inbound SSH hits and NAT redirect" loading="lazy">
+        </div>
+        <div class="ev-body">
+          <div class="ev-title">OPNSENSE · LIVE FIREWALL LOG <span class="ev-tag red">live traffic</span></div>
+          <p class="ev-caption">
+            Live log showing real external IPs matching <code>Allow inbound SSH to honeypot</code>
+            and triggering the <code>rdr</code> redirect. Each inbound connection generates
+            three log lines — WAN in, NAT redirect, and Honeypot out — confirming the
+            full redirect chain is functioning. Destination IPs are redacted.
+          </p>
+        </div>
+      </div>
+ 
+    </div>
+  </section>
+ 
+  <!-- ══════════════════════════════════════════
+       SECTION 3: THREAT DETECTION & SIEM
+  ══════════════════════════════════════════ -->
+  <section class="lb-section">
+    <div class="section-label">
+      <span class="section-num">03</span>
+      <div class="section-divider"></div>
+    </div>
+    <h2 class="section-title">Threat Detection &amp; SIEM</h2>
+    <p class="section-intro">
+      Wazuh aggregates logs from across the lab and correlates them against MITRE
+      ATT&amp;CK. The dashboards below were built to give a quick operational read on
+      threat volume, attack technique distribution, and honeypot activity.
+    </p>
+ 
+    <div class="evidence-stack">
+ 
+      <div class="ev-card">
+        <div class="ev-img-wrap">
+          <img src="wazuh-soc-dashboard.png" alt="Custom SOC dashboard showing 43,104 total alerts and 42,184 honeypot alerts" loading="lazy">
+        </div>
+        <div class="ev-body">
+          <div class="ev-title">WAZUH · CUSTOM SOC DASHBOARD</div>
+          <p class="ev-caption">
+            43,104 total alerts in the last 24 hours; 42,184 (97.9%) from the honeypot.
+            Top destination port is SSH at 100% — the entire exposed attack surface is
+            deliberate and contained. The dashboard was built to give a one-glance read
+            on honeypot activity versus everything else.
+          </p>
+        </div>
+      </div>
+ 
+      <div class="evidence-pair">
+ 
+        <div class="ev-card">
+          <div class="ev-img-wrap">
+            <img src="wazuh-agent-overview.png" alt="Wazuh agent overview for DolosHoney showing MITRE ATT&CK tactic counts" loading="lazy">
+          </div>
+          <div class="ev-body">
+            <div class="ev-title">WAZUH · AGENT OVERVIEW · DOLOS</div>
+            <p class="ev-caption">
+              MITRE tactic distribution over 24 hours: Execution at 8,292 events, with
+              Defense Evasion, Initial Access, Persistence, and Privilege Escalation
+              each at 4,673 — a pattern consistent with credential stuffing followed by
+              automated post-login enumeration.
+            </p>
+          </div>
+        </div>
+ 
+        <div class="ev-card">
+          <div class="ev-img-wrap">
+            <img src="wazuh-mitre-dashboard.png" alt="Wazuh MITRE ATT&CK dashboard showing attack technique distribution and alert cadence" loading="lazy">
+          </div>
+          <div class="ev-body">
+            <div class="ev-title">WAZUH · MITRE ATT&amp;CK DASHBOARD</div>
+            <p class="ev-caption">
+              Filtered to agent 004 (DolosHoney). The alert cadence chart shows repeated
+              burst cycles; the bar chart breaks down attack volume by MITRE tactic.
+              Seeing the pattern — not just individual alerts — is what distinguishes
+              detection from monitoring.
+            </p>
+          </div>
+        </div>
+ 
+      </div>
+    </div>
+  </section>
+ 
+  <!-- ══════════════════════════════════════════
+       SECTION 4: INCIDENT ANALYSIS
+  ══════════════════════════════════════════ -->
+  <section class="lb-section">
+    <div class="section-label">
+      <span class="section-num">04</span>
+      <div class="section-divider"></div>
+    </div>
+    <h2 class="section-title">Incident Analysis</h2>
+    <p class="section-intro">
+      A complete session trace — from first packet to attacker command — reconstructed
+      from Wazuh logs and Cowrie's session recorder. Every step is timestamped and
+      mapped to a MITRE technique.
+    </p>
+ 
+    <div class="evidence-stack">
+ 
+      <div class="ev-card">
+        <div class="ev-img-wrap">
+          <img src="wazuh-session-chain.png" alt="Wazuh threat hunting view showing the full attack session chain for session 4c40cac87e6f" loading="lazy">
+        </div>
+        <div class="ev-body">
+          <div class="ev-title">WAZUH THREAT HUNTING · SESSION CHAIN <span class="ev-tag red">session 4c40cac87e6f</span></div>
+          <p class="ev-caption">
+            Full attack session reconstructed in Wazuh's threat hunting view. Reading
+            bottom-to-top: key exchange, login success, session parameters, attacker
+            command input (<code>uname -s -v -n -r -m</code>), TTY log closed, session closed.
+            All events within the same session ID, timestamped within milliseconds of
+            each other.
+          </p>
+        </div>
+      </div>
+ 
+      <div class="evidence-pair">
+ 
+        <div class="ev-card">
+          <div class="ev-img-wrap">
+            <img src="wazuh-login-alert.png" alt="Wazuh Discover showing cowrie.login.success event with T1078 mapping" loading="lazy">
+          </div>
+          <div class="ev-body">
+            <div class="ev-title">WAZUH · LOGIN ALERT DETAIL <span class="ev-tag red">T1078</span></div>
+            <p class="ev-caption">
+              Alert detail for a <code>cowrie.login.success</code> event. Attacker from
+              <code>109.160.32.149</code> authenticated with <code>support / support123</code> —
+              a default credential pair. Mapped to MITRE T1078 (Valid Accounts) with
+              tactics covering Defense Evasion, Persistence, Privilege Escalation, and
+              Initial Access. Rule level 14 triggered an email alert.
+            </p>
+          </div>
+        </div>
+ 
+        <div class="ev-card">
+          <div class="ev-img-wrap">
+            <img src="cowrie-playlog.png" alt="Cowrie playlog terminal showing attacker ran uname command against fake Debian host" loading="lazy">
+          </div>
+          <div class="ev-body">
+            <div class="ev-title">COWRIE · SESSION REPLAY <span class="ev-tag green">captured</span></div>
+            <p class="ev-caption">
+              Attacker session replayed via Cowrie's <code>playlog</code> tool. Immediately
+              after login, the attacker ran <code>uname -s -v -n -r -m</code> — standard
+              system fingerprinting. Cowrie returned a fabricated Debian host identity
+              (<code>webserver01</code>). The full TTY session was recorded without the
+              attacker's knowledge.
+            </p>
+          </div>
+        </div>
+ 
+      </div>
+    </div>
+  </section>
+ 
+</div><!-- /page -->
+ 
+</body>
+</html>
