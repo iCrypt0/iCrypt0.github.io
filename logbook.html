@@ -213,17 +213,41 @@ nav {
  
 /* click-to-enlarge */
 .ev-img-wrap a { display: block; cursor: zoom-in; }
-.ev-img-wrap a:hover img { opacity: 0.9; }
-.ev-img-wrap a::after {
-  content: '⤢ click to enlarge';
-  display: block;
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--text-faint);
-  text-align: right;
-  padding: 3px 2px 0;
-  letter-spacing: 0.05em;
+.ev-img-wrap a:hover img { opacity: 0.88; }
+ 
+/* lightbox */
+#lb-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: rgba(2,6,16,0.92);
+  backdrop-filter: blur(4px);
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-out;
 }
+#lb-overlay.open { display: flex; }
+#lb-overlay img {
+  max-width: min(92vw, 1400px);
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 6px;
+  box-shadow: 0 8px 48px rgba(0,0,0,0.7);
+  cursor: default;
+}
+#lb-close {
+  position: fixed;
+  top: 18px;
+  right: 22px;
+  font-family: var(--mono);
+  font-size: 22px;
+  color: var(--text-dim);
+  cursor: pointer;
+  line-height: 1;
+  z-index: 1000;
+}
+#lb-close:hover { color: var(--text); }
  
 /* highlight pill */
 .ev-tag {
@@ -518,6 +542,54 @@ nav {
  
 </div><!-- /page -->
  
+<!-- lightbox overlay -->
+<div id="lb-overlay" role="dialog" aria-modal="true">
+  <span id="lb-close" aria-label="Close">✕</span>
+  <img id="lb-img" src="" alt="">
+</div>
+ 
+<script>
+(function () {
+  var overlay = document.getElementById('lb-overlay');
+  var lbImg   = document.getElementById('lb-img');
+  var lbClose = document.getElementById('lb-close');
+ 
+  function open(src, alt) {
+    lbImg.src = src;
+    lbImg.alt = alt || '';
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function close() {
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+    lbImg.src = '';
+  }
+ 
+  // wire up all evidence image links
+  document.querySelectorAll('.ev-img-wrap a').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      var img = a.querySelector('img');
+      open(a.getAttribute('href'), img ? img.alt : '');
+    });
+  });
+ 
+  // close on overlay click (but not on image click)
+  overlay.addEventListener('click', function (e) {
+    if (e.target !== lbImg) close();
+  });
+  lbClose.addEventListener('click', close);
+ 
+  // close on Escape
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') close();
+  });
+})();
+</script>
+ 
 </body>
+</html>
+ 
 </html>
  
