@@ -576,8 +576,8 @@ nav {
             <p class="ev-caption">
               Parrot Security VM (<code>Athena</code>) with its NIC tagged <code>tag=50</code> on
               <code>vmbr0</code>, so it lands on the OSINT VLAN with no path to Trusted,
-              Management, or Honeypot. Disposable by design: snapshot before each session,
-              roll back after.
+              Management, or Honeypot. Nothing of value lives on it, so it can be rebuilt
+              from the ISO at any time.
             </p>
           </div>
         </div>
@@ -589,10 +589,11 @@ nav {
           <div class="ev-body">
             <div class="ev-title">OPNSENSE · OSINT VLAN RULESET</div>
             <p class="ev-caption">
-              Block rules for every RFC1918 range (<code>10/8</code>, <code>172.16/12</code>,
-              <code>192.168/16</code>) sit above a single allow-to-WAN rule, so a compromised
-              research box can reach the internet and nothing else. Traffic then leaves
-              through IPVanish before Tor, so neither the VPN nor the exit sees both ends.
+              Two rules, evaluated top down: a block from <code>OSINT network</code> to an
+              <code>RFC1918</code> alias covering <code>10/8</code>, <code>172.16/12</code>, and
+              <code>192.168/16</code>, then an allow to anywhere. A compromised research box
+              can reach the internet and nothing inside the lab. Traffic then leaves through
+              IPVanish before Tor, so neither the VPN nor the exit node sees both ends.
             </p>
           </div>
         </div>
@@ -687,5 +688,4 @@ nav {
  
 </body>
 </html>
-</body>
-</html>
+ 
