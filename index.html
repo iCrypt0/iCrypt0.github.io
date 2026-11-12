@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -195,6 +195,28 @@ section { padding: 72px 0 8px; }
   border-radius: 10px; padding: 18px 24px; transition: border-color .25s;
 }
 .lab-row:hover { border-color: var(--blue-600); }
+a.lab-row { text-decoration: none; color: inherit; }
+a.lab-row:hover .tag { background: var(--blue-deep); color: #fff; }
+ 
+/* logbook teaser */
+.lab-teaser { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px; }
+.teaser {
+  display: block; text-decoration: none; background: var(--bg-card);
+  border: 1px solid var(--line-bright); border-radius: 10px; overflow: hidden;
+  transition: border-color .25s, transform .25s;
+}
+.teaser:hover { border-color: var(--blue-600); transform: translateY(-2px); }
+.teaser img {
+  display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover;
+  object-position: top left; border-bottom: 1px solid var(--line);
+}
+.teaser .t-body { padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.teaser .t-title { font-family: var(--mono); font-size: 12px; color: var(--blue-200); }
+.teaser .t-arrow { font-family: var(--mono); font-size: 11px; color: var(--text-faint); white-space: nowrap; }
+.teaser:hover .t-arrow { color: var(--blue-400); }
+.lab-more { font-family: var(--mono); font-size: 12px; color: var(--text-faint); margin-top: 18px; }
+.lab-more a { color: var(--blue-400); text-decoration: none; }
+.lab-more a:hover { color: var(--blue-200); }
 .lab-row .name { font-family: var(--mono); font-size: 14px; color: var(--blue-200); font-weight: 500; }
 .lab-row .desc { font-size: 14px; color: var(--text-dim); }
 .lab-row .tag {
@@ -226,6 +248,7 @@ footer {
 @media (max-width: 760px) {
   .about-grid { grid-template-columns: 1fr; }
   .lab-row { grid-template-columns: 1fr; gap: 6px; }
+  .lab-teaser { grid-template-columns: 1fr; }
   .lab-row .tag { justify-self: start; }
   nav .links a { margin-left: 16px; }
   .topo { overflow-x: auto; -webkit-overflow-scrolling: touch; }
@@ -475,27 +498,45 @@ footer {
 <section id="lab">
   <div class="sec-head" data-n="03">home lab</div>
   <div class="lab-rows">
-    <div class="lab-row">
+    <a class="lab-row" href="logbook.html#infrastructure">
       <span class="name">beelink mini pc</span>
       <span class="desc">Bare metal Proxmox hypervisor hosting the entire lab as virtual machines</span>
-      <span class="tag">hypervisor</span>
-    </div>
-    <div class="lab-row">
+      <span class="tag">hypervisor →</span>
+    </a>
+    <a class="lab-row" href="logbook.html#network">
       <span class="name">opnsense</span>
       <span class="desc">Virtualized firewall handling routing, segmentation, and traffic filtering for the lab network</span>
-      <span class="tag">firewall</span>
-    </div>
-    <div class="lab-row">
+      <span class="tag">firewall →</span>
+    </a>
+    <a class="lab-row" href="logbook.html#siem">
       <span class="name">wazuh</span>
       <span class="desc">SIEM collecting and correlating logs across the lab, alerting on suspicious activity</span>
-      <span class="tag">siem</span>
-    </div>
-    <div class="lab-row">
+      <span class="tag">siem →</span>
+    </a>
+    <a class="lab-row" href="logbook.html#incident">
       <span class="name">honeypot</span>
       <span class="desc">Live decoy capturing real-world attack attempts for analysis and threat intel practice</span>
-      <span class="tag">deception</span>
-    </div>
+      <span class="tag">deception →</span>
+    </a>
   </div>
+ 
+  <div class="lab-teaser">
+    <a class="teaser" href="logbook.html#incident">
+      <img src="honeypotattackproof.png" alt="Cowrie session replay of a real attacker" loading="lazy">
+      <div class="t-body">
+        <span class="t-title">attacker session replay</span>
+        <span class="t-arrow">logbook / 04 →</span>
+      </div>
+    </a>
+    <a class="teaser" href="logbook.html#siem">
+      <img src="wazuhAlert.png" alt="Wazuh SOC dashboard, 43,104 alerts in 24 hours" loading="lazy">
+      <div class="t-body">
+        <span class="t-title">43,104 alerts / 24h</span>
+        <span class="t-arrow">logbook / 03 →</span>
+      </div>
+    </a>
+  </div>
+  <p class="lab-more">Full evidence, screenshots, and incident walkthrough in the <a href="logbook.html">logbook →</a></p>
 </section>
  
 <section id="contact">
@@ -640,3 +681,4 @@ footer {
 </script>
 </body>
 </html>
+ 
