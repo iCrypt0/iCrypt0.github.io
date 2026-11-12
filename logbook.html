@@ -25,6 +25,7 @@
   --v20: #f87171;
   --v30: #a78bfa;
   --v40: #fb923c;
+  --v50: #4ade80;
   --mono: 'JetBrains Mono', monospace;
   --sans: 'Inter', sans-serif;
 }
@@ -283,7 +284,7 @@ nav {
   <a href="index.html" class="nav-brand">icrypt0</a>
   <ul class="nav-links">
     <li><a href="index.html">home</a></li>
-    <li><a href="index.html#projects">projects</a></li>
+    <li><a href="index.html#lab">lab</a></li>
     <li><a href="logbook.html" class="active">logbook</a></li>
   </ul>
 </nav>
@@ -295,8 +296,9 @@ nav {
     <h1 class="page-title">Logbook</h1>
     <p class="page-desc">
       Evidence from a self-hosted VLAN-segmented home lab running a production-grade
-      honeypot, SIEM, and firewall stack. Everything here is captured from real traffic
-      hitting a live environment.
+      honeypot, SIEM, and firewall stack, plus an isolated OSINT segment for threat
+      intelligence work. Everything here comes from a live environment: real attackers
+      hitting the honeypot, and real adversary infrastructure observed from the research VLAN.
     </p>
   </div>
  
@@ -325,8 +327,9 @@ nav {
           <div class="ev-body">
             <div class="ev-title">PROXMOX VE · VM INVENTORY</div>
             <p class="ev-caption">
-              Five VMs running concurrently on a single physical host: the OPNsense
-              firewall, Wazuh SIEM manager, Cowrie honeypot, and supporting services.
+              Virtual machines running concurrently on a single physical host: the OPNsense
+              firewall, Wazuh SIEM manager, Cowrie honeypot, the Parrot OS OSINT workstation
+              on its own isolated VLAN, and supporting services.
               Uptime across the board confirms persistent operation, not a one-time demo.
             </p>
           </div>
@@ -339,9 +342,11 @@ nav {
           <div class="ev-body">
             <div class="ev-title">802.1Q VLAN CONFIG · MANAGED SWITCH</div>
             <p class="ev-caption">
-              VLANs 10 (Trusted), 20 (Honeypot), 30 (Management), and 40 (IoT) defined
-              with explicit tagged/untagged port assignments. Port 1 carries the trunk to
-              the router; each downstream port lands on exactly one VLAN.
+              VLANs 10 (Trusted), 20 (Honeypot), 30 (Management), 40 (IoT), and 50 (OSINT)
+              defined with explicit tagged/untagged port assignments. Port 1 carries the
+              802.1Q trunk to the router; each downstream port lands on exactly one VLAN.
+              Management and OSINT exist only as tagged VLANs on the trunk, so they are
+              reachable from VMs but have no physical port at all.
             </p>
           </div>
         </div>
@@ -540,6 +545,98 @@ nav {
     </div>
   </section>
  
+  <!-- ══════════════════════════════════════════
+       SECTION 5: OSINT & THREAT INTELLIGENCE
+  ══════════════════════════════════════════ -->
+  <section class="lb-section" id="osint">
+    <div class="section-label">
+      <span class="section-num">05</span>
+      <div class="section-divider"></div>
+    </div>
+    <h2 class="section-title">OSINT &amp; Threat Intelligence</h2>
+    <p class="section-intro">
+      When a local organization was hit by Interlock ransomware, I built a dedicated
+      research segment to investigate it safely: VLAN 50 is firewalled off from every
+      internal network, egresses only through a VPN, and runs a Parrot OS workstation with
+      Tor Browser. From there I corroborated the ransom note's negotiation portal against
+      ransomware.live's infrastructure data and monitored the group's leak site for a
+      victim posting. The victim is deliberately not identified anywhere on this page.
+    </p>
+ 
+    <div class="evidence-stack">
+ 
+      <div class="evidence-pair">
+ 
+        <div class="ev-card">
+          <div class="ev-img-wrap">
+            <a href="athena-vm.png" title="Click to view full size"><img src="athena-vm.png" alt="Proxmox hardware view of the Athena VM on VLAN tag 50 with Parrot Security ISO" loading="lazy"></a>
+          </div>
+          <div class="ev-body">
+            <div class="ev-title">PROXMOX · ATHENA · OSINT WORKSTATION <span class="ev-tag green">VLAN 50</span></div>
+            <p class="ev-caption">
+              Parrot Security VM (<code>Athena</code>) with its NIC tagged <code>tag=50</code> on
+              <code>vmbr0</code>, so it lands on the OSINT VLAN with no path to Trusted,
+              Management, or Honeypot. Disposable by design: snapshot before each session,
+              roll back after.
+            </p>
+          </div>
+        </div>
+ 
+        <div class="ev-card">
+          <div class="ev-img-wrap">
+            <a href="osint-fw-rules.png" title="Click to view full size"><img src="osint-fw-rules.png" alt="OPNsense firewall rules for the OSINT VLAN blocking all RFC1918 destinations and allowing WAN egress" loading="lazy"></a>
+          </div>
+          <div class="ev-body">
+            <div class="ev-title">OPNSENSE · OSINT VLAN RULESET</div>
+            <p class="ev-caption">
+              Block rules for every RFC1918 range (<code>10/8</code>, <code>172.16/12</code>,
+              <code>192.168/16</code>) sit above a single allow-to-WAN rule, so a compromised
+              research box can reach the internet and nothing else. Traffic then leaves
+              through IPVanish before Tor, so neither the VPN nor the exit sees both ends.
+            </p>
+          </div>
+        </div>
+ 
+      </div>
+ 
+      <div class="evidence-pair">
+ 
+        <div class="ev-card">
+          <div class="ev-img-wrap">
+            <a href="interlock-infra.png" title="Click to view full size"><img src="interlock-infra.png" alt="ransomware.live known locations for Interlock showing the group's onion address" loading="lazy"></a>
+          </div>
+          <div class="ev-body">
+            <div class="ev-title">RANSOMWARE.LIVE · INFRASTRUCTURE CORROBORATION <span class="ev-tag red">interlock</span></div>
+            <p class="ev-caption">
+              The ransom note pointed to a <code>.onion</code> negotiation portal at
+              <code>/chat.php</code>. ransomware.live lists the same host as Interlock's known
+              infrastructure, with the leak site at <code>/leaks.php</code>. Matching the note's
+              address to independently tracked group infrastructure confirmed attribution
+              without touching the victim's systems.
+            </p>
+          </div>
+        </div>
+ 
+        <div class="ev-card">
+          <div class="ev-img-wrap">
+            <a href="interlock-leaksite.png" title="Click to view full size"><img src="interlock-leaksite.png" alt="Interlock leak site About page viewed over Tor" loading="lazy"></a>
+          </div>
+          <div class="ev-body">
+            <div class="ev-title">TOR · ADVERSARY LEAK SITE</div>
+            <p class="ev-caption">
+              The group's leak site, reached over Tor from the OSINT VLAN. Interlock frames
+              itself as punishing negligence rather than extorting; the same templated
+              language shows up in every ransom note. Monitoring here is how you learn
+              whether negotiations failed, because victims appear on the leak page before
+              any public notification.
+            </p>
+          </div>
+        </div>
+ 
+      </div>
+    </div>
+  </section>
+ 
 </div><!-- /page -->
  
 <!-- lightbox overlay -->
@@ -588,5 +685,7 @@ nav {
 })();
 </script>
  
+</body>
+</html>
 </body>
 </html>
