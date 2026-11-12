@@ -33,6 +33,10 @@ A self-hosted SOC environment running on a single Beelink mini PC under Proxmox 
 | Cowrie | Dolos | SSH honeypot capturing real attacker sessions |
 | Parrot OS | Athena | OSINT workstation on VLAN 50 |
  
+### Why the Greek names
+ 
+I like a naming scheme, and I've been into Greek mythology since I was a kid, so each host is named for what it does. Aegis is the shield of Zeus and Athena, so it's the firewall. Atlas holds up the sky, so it's the hypervisor holding every VM. Hermes is the messenger between gods and mortals, so it's the SIEM carrying logs from everything. Dolos is the spirit of trickery and deception, so it's the honeypot. Athena is strategy and wisdom, so it's the intelligence workstation.
+ 
 ## Logbook sections
  
 1. **Lab Infrastructure.** Proxmox VM inventory and the switch VLAN table.
@@ -48,4 +52,3 @@ Public attacker IPs in firewall and honeypot logs are left visible; they are int
  
 GitHub: [iCrypt0](https://github.com/iCrypt0)
 LinkedIn: [chandlerkirk](https://www.linkedin.com/in/chandlerkirk)
- 
