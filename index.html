@@ -190,6 +190,11 @@ nav .links a:hover{color:#fff!important;border-color:var(--pri);background:#0c1a
 .contact-box h2{font-family:var(--display)!important;text-transform:uppercase;letter-spacing:4px!important;font-size:38px!important;text-shadow:0 0 18px rgba(45,140,255,.5)}
 footer{font-family:var(--mono)!important;letter-spacing:3px!important}
 @media (max-width:760px){nav{flex-direction:column;align-items:flex-start}nav .right{justify-content:flex-start}}
+.hero h1 em{display:block;min-height:1.05em;white-space:nowrap}
+.myth{color:var(--ice);border-bottom:1px dotted var(--line-2);cursor:help}
+.about-grid{grid-template-columns:1.7fr 1fr!important;align-items:start}
+.facts.card{align-self:start;padding:4px 18px!important}
+.facts.card div{padding:7px 0!important}
 </style>
 <!-- Open Graph / Social Preview -->
 <meta property="og:title" content="Chandler Kirk — Portfolio & Lab Logbook">
@@ -221,7 +226,7 @@ footer{font-family:var(--mono)!important;letter-spacing:3px!important}
 
 <div class="hero">
   <div class="kicker">chandler // north georgia</div>
-  <h1>i learn by <em><span id="rotator">patterns</span></em><span class="cursor"></span></h1>
+  <h1>i learn by <em><span id="rotator">patterns</span><span class="cursor"></span></em></h1>
   <p class="sub">IT student at Kennesaw State, A.S. in Cybersecurity from Lanier Tech. I run a home SOC that detects, enriches and blocks real attackers on its own.</p>
   <div class="badges">
     <span class="badge ok"><span class="dot"></span>LAB ONLINE</span>
@@ -369,15 +374,16 @@ footer{font-family:var(--mono)!important;letter-spacing:3px!important}
   <div class="sec-head" data-n="01">about</div>
   <div class="about-grid">
     <div>
-      <p>Always loved tech growing up — as a kid I was fixing the router, picking the hacker class in every co-op game, figuring out how things work just to see if I could and because it was fun.</p>
-      <p>Now I'm studying <strong>IT at Kennesaw State</strong> after finishing an <strong>A.S. in Cybersecurity at Lanier Tech</strong>, building out a home lab that I treat like a production network.</p>
-      <p>I learn by patterns and puzzles. Cybersecurity clicked because that's the whole job: figure out how the system works, find where it's weak, solve it.</p>
+      <p>The first time I saw a virtual machine was at my dad's work. He pulled one up and told me it was a "computer inside a computer," and that idea never really left me. A whole machine running inside another one? I needed to know how that worked.</p>
+      <p>That's pretty much what my home lab turned into. One <strong>mini PC running Proxmox</strong>, carrying a firewall, a SIEM, a honeypot, and a few other machines across five VLANs. It started as a way to actually understand networking instead of memorizing it for a test, and now it's something I mess with almost every day: breaking it, fixing it, and automating whatever I get tired of doing by hand.</p>
+      <p>I'm big on Greek mythology, so every machine is named after whoever fits its job. <span class="myth" title="the Titan who holds up the sky">Atlas</span> is the hypervisor, because it holds up everything else. <span class="myth" title="the shield of Zeus and Athena">Aegis</span>, the shield, is the firewall. <span class="myth" title="messenger of the gods">Hermes</span>, the messenger, carries the logs to the SIEM. <span class="myth" title="spirit of trickery and deception">Dolos</span>, the spirit of trickery, runs the honeypot and lies to every attacker who logs in. <span class="myth" title="goddess of wisdom and strategy">Athena</span> handles the OSINT research, and <span class="myth" title="messenger goddess of the rainbow">Iris</span> delivers the alerts.</p>
+      <p>I finished my <strong>A.S. in Cybersecurity at Lanier Tech</strong> and I'm working on my <strong>B.A.S. in IT at Kennesaw State</strong>.</p>
     </div>
     <div class="facts card">
       <div><span class="k">degree</span><span class="v">B.A.S. IT · KSU</span></div>
       <div><span class="k">prior</span><span class="v">A.S. Cybersecurity</span></div>
-      <div><span class="k">practice</span><span class="v">TryHackMe / CTFs</span></div>
       <div><span class="k">grad target</span><span class="v">Fall 2027</span></div>
+      <div><span class="k">lab</span><span class="v">6 hosts · 5 VLANs</span></div>
       <div><span class="k">location</span><span class="v">north georgia</span></div>
     </div>
   </div>
@@ -492,7 +498,7 @@ footer{font-family:var(--mono)!important;letter-spacing:3px!important}
       </div>
     </a>
   </div>
-  <p class="lab-more">Hosts are named for their jobs: <span title="shield of Zeus and Athena">Aegis</span> guards the edge, <span title="holds up the sky">Atlas</span> carries every VM, <span title="messenger of the gods">Hermes</span> carries the logs, <span title="spirit of trickery">Dolos</span> deceives, <span title="goddess of strategy and wisdom">Athena</span> investigates, and <span title="messenger goddess of the rainbow">Iris</span> delivers the alerts.</p>
+  
   <p class="lab-more">Full evidence, screenshots, and incident walkthrough in the <a href="logbook.html">logbook →</a></p>
 </section>
 
