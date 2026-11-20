@@ -3,615 +3,604 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Logbook · icrypt0</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+<title>chandler — cybersecurity & IT</title>
+<meta name="description" content="IT student and cybersecurity enthusiast. Home SOC lab running Proxmox, OPNsense, Wazuh SIEM, a live honeypot and n8n SOAR automation.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
 :root{
-  color-scheme:dark;
-  --bg:#03060d; --bg-card:#0a1020; --bg-raise:#070c18; --line:#16233d; --line-bright:#1f3557;
+  --bg:#03060d; --panel:#0a1020; --panel-2:#070c18; --line:#16233d; --line-2:#1f3557;
   --pri:#2d8cff; --ice:#8fd3ff; --ok:#3dffb4; --warn:#ffb020; --crit:#ff3d6e; --purple:#b46bff;
-  --blue-400:#2d8cff; --blue-200:#8fd3ff; --cyan:#8fd3ff;
-  --text:#dbe6ff; --body:#a9b8d4; --text-dim:#5f7194;
+  --txt:#dbe6ff; --body:#a9b8d4; --dim:#5f7194;
   --mono:'JetBrains Mono',monospace; --sans:'Inter',sans-serif; --display:'Rajdhani',sans-serif;
+  --cut:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,0 100%);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--body);font-family:var(--sans);min-height:100vh;
-  background-image:radial-gradient(ellipse 80% 40% at 50% -10%,rgba(11,42,94,.85) 0,transparent 70%),repeating-linear-gradient(0deg,rgba(255,255,255,.015) 0 1px,transparent 1px 3px)}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--body);font-family:var(--sans);font-size:16px;line-height:1.7;overflow-x:hidden;
+  background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(11,42,94,.9) 0,transparent 70%)}
 ::selection{background:var(--pri);color:#fff}
+a{color:inherit}
+.gridlines{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(45,140,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(45,140,255,.07) 1px,transparent 1px);
+  background-size:56px 56px;mask-image:radial-gradient(ellipse 90% 70% at 50% 0%,black 0%,transparent 75%);-webkit-mask-image:radial-gradient(ellipse 90% 70% at 50% 0%,black 0%,transparent 75%)}
+.scan{position:fixed;inset:0;z-index:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px)}
+main{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:0 24px}
 
 /* nav */
-nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 max(24px,env(safe-area-inset-left,0px));height:54px;background:rgba(3,6,13,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
-.nav-brand{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--pri);text-decoration:none;letter-spacing:.05em;text-shadow:0 0 12px rgba(45,140,255,.5)}
-.nav-links{display:flex;gap:24px;list-style:none}
-.nav-links a{font-family:var(--mono);font-size:11px;color:var(--text-dim);text-decoration:none;letter-spacing:.12em;text-transform:uppercase;transition:color .15s}
-.nav-links a::before{content:'//';color:var(--line-bright);margin-right:5px}
-.nav-links a:hover,.nav-links a.active{color:var(--ice)}
+nav{display:flex;justify-content:space-between;align-items:center;padding:26px 0;font-family:var(--mono);font-size:13px;border-bottom:1px solid var(--line)}
+nav .logo{color:var(--pri);font-weight:700;letter-spacing:.05em;text-shadow:0 0 12px rgba(45,140,255,.5)}
+nav .logo span{color:var(--dim);text-shadow:none}
+nav .links a{color:var(--dim);text-decoration:none;margin-left:26px;transition:color .2s;letter-spacing:.06em;text-transform:uppercase;font-size:12px}
+nav .links a:hover{color:var(--ice)}
+nav .links a::before{content:'//';color:var(--line-2);margin-right:5px}
 
-/* shell */
-.page{max-width:960px;margin:0 auto;padding:56px max(24px,env(safe-area-inset-left,0px)) 80px}
-.page-header{margin-bottom:56px}
-.kicker{font-family:var(--mono);font-size:11px;color:var(--pri);letter-spacing:.18em;text-transform:uppercase;margin-bottom:14px}
-.kicker::before{content:'> ';color:var(--text-dim)}
-.page-title{font-family:var(--display);font-size:clamp(36px,6vw,56px);font-weight:700;color:#eef4ff;letter-spacing:.02em;line-height:1;margin-bottom:14px}
-.page-title::after{content:'_';color:var(--pri);text-shadow:0 0 14px var(--pri);animation:blink 1.1s steps(1) infinite}
+/* hero */
+.hero{padding:64px 0 22px}
+.hero .kicker{font-family:var(--mono);font-size:12px;color:var(--pri);letter-spacing:.18em;text-transform:uppercase;margin-bottom:18px}
+.hero .kicker::before{content:'> ';color:var(--dim)}
+.hero h1{font-family:var(--display);font-size:clamp(40px,7vw,72px);font-weight:700;color:#eef4ff;line-height:1.02;letter-spacing:.01em;max-width:760px}
+.hero h1 em{font-style:normal;color:var(--pri);text-shadow:0 0 22px rgba(45,140,255,.55)}
+.hero p.sub{margin-top:20px;max-width:600px;color:var(--body);font-size:17px}
+.hero .cursor{display:inline-block;width:4px;height:.9em;background:var(--pri);vertical-align:-.05em;margin-left:6px;box-shadow:0 0 10px var(--pri);animation:blink 1.1s steps(1) infinite}
 @keyframes blink{50%{opacity:0}}
-.page-desc{font-size:15px;line-height:1.7;max-width:620px}
-.toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
-.toc a{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ice);text-decoration:none;border:1px solid var(--line-bright);background:var(--bg-card);padding:5px 10px;clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,0 100%);transition:all .2s}
-.toc a:hover{border-color:var(--pri);background:var(--pri);color:#fff}
-.toc a b{color:var(--text-dim);font-weight:400;margin-right:5px}
-.toc a:hover b{color:#cfe2ff}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+.badge{font-family:var(--mono);font-size:11px;letter-spacing:.1em;padding:6px 12px;border:1px solid var(--line-2);background:var(--panel);color:var(--ice);clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%)}
+.badge b{font-weight:500;color:var(--dim);margin-right:6px}
+.badge.ok{color:var(--ok)} .badge.crit{color:var(--crit)}
+.badge .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ok);margin-right:7px;box-shadow:0 0 8px var(--ok);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.35}}
+
+/* topology */
+.topo-wrap{padding:40px 0 6px}
+.topo-label{font-family:var(--mono);font-size:12px;color:var(--dim);letter-spacing:.16em;text-transform:uppercase;margin-bottom:10px}
+.topo-label b{color:var(--ok);font-weight:500}
+.topo{border:1px solid var(--line-2);background:var(--panel-2);clip-path:polygon(0 0,calc(100% - 22px) 0,100% 22px,100% 100%,0 100%);border-left:3px solid var(--pri)}
+.topo svg{display:block;width:100%;height:auto}
+.topo-legend{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:12px 0 4px}
+.topo-legend-vlans{display:flex;flex-wrap:wrap;gap:16px}
+.tl-item{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.04em}
+.tl-dot{width:8px;height:8px;flex-shrink:0;box-shadow:0 0 6px currentColor}
+.tl-btn,.btn{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ice);text-decoration:none;border:1px solid var(--pri);background:rgba(45,140,255,.08);padding:7px 14px;transition:background .2s,color .2s;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%)}
+.tl-btn:hover,.btn:hover{background:var(--pri);color:#fff}
 
 /* sections */
-.lb-section{margin-bottom:76px;scroll-margin-top:76px}
-.section-label{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-.section-num{font-family:var(--mono);font-size:12px;color:var(--pri);letter-spacing:.2em;font-weight:700}
-.section-num::before{content:'// ';color:var(--text-dim);font-weight:400}
-.section-num::after{content:' //';color:var(--text-dim);font-weight:400}
-.section-divider{flex:1;height:1px;background:linear-gradient(90deg,var(--line-bright),transparent)}
-.section-title{font-family:var(--display);font-size:28px;font-weight:700;color:#eef4ff;letter-spacing:.03em;margin-bottom:8px}
-.section-intro{font-size:14px;line-height:1.7;max-width:680px;margin-bottom:28px}
+section{padding:76px 0 8px}
+.sec-head{font-family:var(--mono);font-size:13px;color:var(--pri);letter-spacing:.24em;text-transform:uppercase;margin-bottom:30px;display:flex;align-items:center;gap:14px;font-weight:700}
+.sec-head::before{content:'// ' attr(data-n) ' //';color:var(--dim);font-weight:400}
+.sec-head::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--line-2),transparent)}
 
-/* evidence cards */
-.evidence-stack{display:flex;flex-direction:column;gap:22px}
-.evidence-pair{display:grid;grid-template-columns:1fr 1fr;gap:22px}
-@media (max-width:680px){.evidence-pair{grid-template-columns:1fr}}
-.ev-card{background:var(--bg-card);border:1px solid var(--line);border-left:3px solid var(--pri);overflow:hidden;clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,0 100%);transition:border-color .25s,box-shadow .25s}
-.ev-card:hover{border-color:var(--line-bright);box-shadow:inset 0 0 30px rgba(45,140,255,.06)}
-#network .ev-card,#infrastructure .ev-card{border-left-color:var(--pri)}
-#siem .ev-card{border-left-color:var(--purple)}
-#incident .ev-card{border-left-color:var(--crit)}
-#osint .ev-card{border-left-color:var(--ok)}
-#soc .ev-card{border-left-color:var(--warn)}
-.ev-img-wrap{width:100%;overflow-x:auto;background:var(--bg-raise);border-bottom:1px solid var(--line)}
-.ev-img-wrap img{display:block;width:100%;min-width:480px;height:auto}
-.ev-body{padding:16px 18px}
-.ev-title{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--ice);letter-spacing:.12em;margin-bottom:7px}
-.ev-caption{font-size:13px;color:var(--body);line-height:1.65}
-.ev-caption code{font-family:var(--mono);font-size:11px;color:var(--ice);background:var(--bg-raise);border:1px solid var(--line);padding:1px 5px}
-.ev-img-wrap a{display:block;cursor:zoom-in}
-.ev-img-wrap a:hover img{opacity:.88}
+.card{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--pri);clip-path:var(--cut);transition:border-color .25s,transform .25s,box-shadow .25s}
+.card:hover{border-color:var(--line-2);transform:translateY(-2px);box-shadow:inset 0 0 30px rgba(45,140,255,.06)}
 
-/* lightbox */
-#lb-overlay{display:none;position:fixed;inset:0;z-index:999;background:rgba(2,5,12,.94);backdrop-filter:blur(4px);align-items:center;justify-content:center;cursor:zoom-out}
-#lb-overlay.open{display:flex}
-#lb-overlay img{max-width:min(92vw,1400px);max-height:90vh;object-fit:contain;border:1px solid var(--line-bright);box-shadow:0 0 60px rgba(45,140,255,.18);cursor:default}
-#lb-close{position:fixed;top:18px;right:22px;font-family:var(--mono);font-size:22px;color:var(--text-dim);cursor:pointer;line-height:1;z-index:1000}
-#lb-close:hover{color:var(--text)}
+/* about */
+.about-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:48px}
+.about-grid p{margin-bottom:16px}
+.about-grid p strong{color:var(--txt);font-weight:600}
+.facts{font-family:var(--mono);font-size:13px;padding:8px 20px}
+.facts div{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px dashed var(--line)}
+.facts div:last-child{border-bottom:0}
+.facts .k{color:var(--dim);text-transform:uppercase;font-size:11px;letter-spacing:.1em}
+.facts .v{color:var(--ice);text-align:right}
 
-/* tags */
-.ev-tag{display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;padding:1px 7px;margin-left:6px;vertical-align:middle;position:relative;top:-1px;text-transform:uppercase}
-.ev-tag.red{color:var(--crit);border:1px solid rgba(255,61,110,.5);background:rgba(255,61,110,.08)}
-.ev-tag.blue{color:var(--ice);border:1px solid rgba(45,140,255,.5);background:rgba(45,140,255,.08)}
-.ev-tag.green{color:var(--ok);border:1px solid rgba(61,255,180,.4);background:rgba(61,255,180,.06)}
-.ev-tag.amber{color:var(--warn);border:1px solid rgba(255,176,32,.5);background:rgba(255,176,32,.08)}
+/* skills */
+.skill-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.skill-card{padding:20px 22px}
+.skill-card h3{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--pri);text-transform:uppercase;letter-spacing:.18em;margin-bottom:12px}
+.skill-card h3::before{content:'// ';color:var(--dim)}
+.skill-card ul{list-style:none}
+.skill-card li{font-size:14px;color:var(--txt);padding:5px 0;display:flex;align-items:center;gap:10px;border-bottom:1px dashed rgba(31,53,87,.5)}
+.skill-card li:last-child{border-bottom:0}
+.skill-card li::before{content:'';width:5px;height:5px;background:var(--pri);box-shadow:0 0 6px var(--pri);flex-shrink:0}
+.skill-card.auto{border-left-color:var(--ok)} .skill-card.auto h3{color:var(--ok)} .skill-card.auto li::before{background:var(--ok);box-shadow:0 0 6px var(--ok)}
 
-/* stat strip (section 06) */
-.stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:22px}
-.stat{background:var(--bg-card);border:1px solid var(--line);padding:12px 14px;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%)}
-.stat b{display:block;font-family:var(--display);font-size:28px;line-height:1;font-weight:700}
-.stat small{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--text-dim);text-transform:uppercase}
-.stat.c b{color:var(--crit)}.stat.o b{color:var(--ok)}.stat.i b{color:var(--ice)}.stat.w b{color:var(--warn)}
-@media (max-width:680px){.stat-strip{grid-template-columns:repeat(2,1fr)}.nav-links{gap:12px}.nav-links a::before{display:none}}
-.sequence-label{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:.1em;margin-bottom:10px}
-@media (prefers-reduced-motion:reduce){.page-title::after{animation:none}*{transition:none!important}}
+/* lab rows */
+.lab-rows{display:flex;flex-direction:column;gap:10px}
+.lab-row{display:grid;grid-template-columns:180px 1fr auto;gap:20px;align-items:center;padding:16px 22px;text-decoration:none}
+.lab-row .name{font-family:var(--mono);font-size:13px;color:var(--txt);font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.lab-row .desc{font-size:14px;color:var(--body)}
+.lab-row .tag{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ice);border:1px solid var(--line-2);padding:3px 9px;white-space:nowrap;transition:all .2s}
+.lab-row:hover .tag{border-color:var(--pri);background:var(--pri);color:#fff}
+.lab-row.r20{border-left-color:var(--crit)} .lab-row.r30{border-left-color:var(--purple)} .lab-row.r50{border-left-color:var(--ok)} .lab-row.rnew{border-left-color:var(--warn)}
+.lab-row .new{font-size:9px;color:var(--warn);border:1px solid rgba(255,176,32,.5);padding:1px 5px;margin-left:8px;letter-spacing:.1em;vertical-align:2px}
+
+/* teasers */
+.lab-teaser{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.teaser{display:block;text-decoration:none;overflow:hidden}
+.teaser.wide{grid-column:1/-1}
+.teaser img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;object-position:top left;border-bottom:1px solid var(--line);background:var(--panel-2)}
+.teaser.wide img{aspect-ratio:21/9}
+.teaser .t-body{padding:11px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.teaser .t-title{font-family:var(--mono);font-size:12px;color:var(--ice);letter-spacing:.06em;text-transform:uppercase}
+.teaser .t-arrow{font-family:var(--mono);font-size:11px;color:var(--dim);white-space:nowrap}
+.teaser:hover .t-arrow{color:var(--pri)}
+.lab-more{font-family:var(--mono);font-size:12px;color:var(--dim);margin-top:16px;line-height:1.8}
+.lab-more span{color:var(--ice);border-bottom:1px dotted var(--line-2);cursor:help}
+.lab-more a{color:var(--pri);text-decoration:none}
+.lab-more a:hover{color:var(--ice)}
+
+/* contact */
+.contact-box{padding:44px;text-align:center;margin-bottom:40px}
+.contact-box h2{font-family:var(--display);font-size:34px;font-weight:700;color:#eef4ff;letter-spacing:.03em;margin-bottom:8px}
+.contact-box p{max-width:480px;margin:0 auto 26px;font-size:15px}
+.contact-links{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.contact-links .btn{font-size:12px;padding:11px 24px}
+
+footer{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);text-align:center;padding:30px 0 40px;border-top:1px solid var(--line);margin-top:20px}
+
+@media (max-width:760px){
+  nav{flex-direction:column;align-items:flex-start;gap:10px}
+  nav .links a{margin-left:0;margin-right:14px}
+  .about-grid{grid-template-columns:1fr;gap:20px}
+  .lab-row{grid-template-columns:1fr;gap:6px}
+  .lab-row .tag{justify-self:start}
+  .lab-teaser{grid-template-columns:1fr}
+  .topo{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .topo svg{min-width:760px}
+  .contact-box{padding:30px 20px}
+}
+@media (prefers-reduced-motion:reduce){
+  .hero .cursor,.badge .dot{animation:none}
+  .packet{display:none}
+  *{transition:none!important}
+}
+
+/* ===== NETRUNNER skin ===== */
+:root{--mono:'Share Tech Mono',monospace;--display:'Rajdhani',sans-serif;
+  --cut2:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));
+  --cut-sm:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
+body{background-color:#03060d;background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 3px),radial-gradient(ellipse 90% 55% at 50% -8%,#0b2a5e 0,transparent 62%)!important;background-attachment:fixed}
+.sys{font-family:var(--mono);font-size:12px;letter-spacing:2px;padding:6px 14px;background:var(--ok);color:#00140c;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);white-space:nowrap}
+.sys::before{content:'';display:inline-block;width:7px;height:7px;background:#00140c;border-radius:50%;margin-right:8px;vertical-align:1px;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.35}}
+.glitch{position:relative}
+.glitch:hover{animation:gl .35s steps(2) 2}
+@keyframes gl{0%{text-shadow:2px 0 #ff3d6e,-2px 0 #00e5ff}50%{text-shadow:-2px 0 #ff3d6e,2px 0 #00e5ff;transform:translateX(1px)}100%{text-shadow:none;transform:none}}
+code{font-family:var(--mono)!important}
+
+nav{border-bottom:1px solid var(--pri)!important;box-shadow:0 1px 14px -6px rgba(45,140,255,.7);padding:22px 0 16px!important;gap:16px}
+nav .logo{font-family:var(--display)!important;font-size:28px!important;font-weight:700;letter-spacing:4px!important;color:var(--pri);text-transform:uppercase;text-shadow:0 0 14px rgba(45,140,255,.7)!important}
+nav .logo span{color:var(--ice)!important;text-shadow:none!important}
+nav .logo small{display:block;font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--dim);font-weight:400;text-shadow:none;margin-top:-2px}
+nav .right{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:flex-end}
+nav .links{display:flex;gap:6px;flex-wrap:wrap}
+nav .links a{margin:0!important;font-family:var(--mono)!important;font-size:12px!important;letter-spacing:2px!important;padding:7px 14px;background:var(--panel);border:1px solid var(--line);color:var(--dim)!important;clip-path:polygon(0 0,calc(100% - 9px) 0,100% 9px,100% 100%,0 100%)}
+nav .links a::before{display:none}
+nav .links a:hover{color:#fff!important;border-color:var(--pri);background:#0c1a36;box-shadow:inset 0 -2px 0 var(--pri)}
+.hero .kicker{font-family:var(--mono);letter-spacing:4px}
+.hero h1{font-family:var(--display)!important;text-transform:uppercase;letter-spacing:3px!important;font-size:clamp(42px,7.4vw,84px)!important;text-shadow:2px 0 rgba(255,61,110,.28),-2px 0 rgba(0,229,255,.28)}
+.hero h1 em{text-shadow:0 0 24px rgba(45,140,255,.7),2px 0 rgba(255,61,110,.3),-2px 0 rgba(0,229,255,.3)!important}
+.hero .cursor{width:.32em!important;height:.78em!important;vertical-align:-.02em!important}
+.badge{font-family:var(--mono)!important;letter-spacing:2px!important;clip-path:var(--cut-sm)!important}
+.topo-label,.tl-item{font-family:var(--mono)!important;letter-spacing:2px!important}
+.topo{clip-path:var(--cut2)!important}
+.sec-head{font-family:var(--display)!important;font-size:22px!important;letter-spacing:5px!important;color:var(--pri)!important;text-shadow:0 0 12px rgba(45,140,255,.45)}
+.sec-head::before{font-family:var(--mono);font-size:13px;letter-spacing:3px;text-shadow:none}
+.card{clip-path:var(--cut2)!important}
+.card:hover{box-shadow:inset 0 0 32px rgba(45,140,255,.1),inset 0 0 0 1px rgba(45,140,255,.25)!important}
+.facts{font-family:var(--mono)!important}
+.facts .k{letter-spacing:2px!important}
+.skill-card h3{font-family:var(--display)!important;font-size:16px!important;font-weight:700!important;letter-spacing:3px!important}
+.skill-card h3::before{font-family:var(--mono);font-size:12px}
+.skill-card li{font-family:var(--display);font-size:16px!important;font-weight:500;letter-spacing:.5px}
+.lab-row .name{font-family:var(--display)!important;font-size:20px!important;letter-spacing:3px!important}
+.lab-row .tag,.teaser .t-title,.teaser .t-arrow,.lab-more,.btn,.tl-btn{font-family:var(--mono)!important;letter-spacing:2px!important}
+.lab-row .tag{clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,0 100%)}
+.contact-box h2{font-family:var(--display)!important;text-transform:uppercase;letter-spacing:4px!important;font-size:38px!important;text-shadow:0 0 18px rgba(45,140,255,.5)}
+footer{font-family:var(--mono)!important;letter-spacing:3px!important}
+@media (max-width:760px){nav{flex-direction:column;align-items:flex-start}nav .right{justify-content:flex-start}}
 </style>
+<!-- Open Graph / Social Preview -->
+<meta property="og:title" content="Chandler Kirk — Portfolio & Lab Logbook">
+<meta property="og:description" content="Home SOC lab with five VLANs, Wazuh SIEM, Cowrie honeypot, n8n SOAR automation and OSINT research. Hand-built on Proxmox.">
+<meta property="og:image" content="https://icrypt0.github.io/github-thumbnail.png?v=2">
+<meta property="og:url" content="https://icrypt0.github.io">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
 </head>
 <body>
- 
+<div class="gridlines"></div>
+<div class="scan"></div>
+<canvas id="traces" style="position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.5;mask-image:linear-gradient(to bottom,black 0,black 38vh,transparent 78vh);-webkit-mask-image:linear-gradient(to bottom,black 0,black 38vh,transparent 78vh);"></canvas>
+<main>
+
 <nav>
-  <a href="index.html" class="nav-brand">iCrypt0</a>
-  <ul class="nav-links">
-    <li><a href="index.html">home</a></li>
-    <li><a href="index.html#lab">lab</a></li>
-    <li><a href="logbook.html" class="active">logbook</a></li>
-    <li><a href="#soc">soc</a></li>
-  </ul>
+  <div class="logo glitch">iCrypt0<span>//</span>Lab<small>CHANDLER // HOME SOC // v2.0</small></div>
+  <div class="right">
+    <div class="links">
+      <a href="#about">about</a>
+      <a href="#skills">skills</a>
+      <a href="#lab">lab</a>
+      <a href="logbook.html">logbook</a>
+      <a href="#contact">contact</a>
+    </div>
+    <div class="sys">SYSTEM NOMINAL</div>
+  </div>
 </nav>
- 
-<div class="page">
- 
-  <div class="page-header">
-    <div class="kicker">lab documentation</div>
-    <h1 class="page-title">Logbook</h1>
-    <p class="page-desc">
-      Evidence from a self-hosted VLAN-segmented home lab running a production-grade
-      honeypot, SIEM, and firewall stack, plus an isolated OSINT segment for threat
-      intelligence work. Everything here comes from a live environment: real attackers
-      hitting the honeypot, and real adversary infrastructure observed from the research VLAN.
-    </p>
-    <div class="toc">
-      <a href="#infrastructure"><b>01</b>infrastructure</a>
-      <a href="#network"><b>02</b>network</a>
-      <a href="#siem"><b>03</b>siem</a>
-      <a href="#incident"><b>04</b>incident</a>
-      <a href="#osint"><b>05</b>osint</a>
-      <a href="#soc"><b>06</b>soc automation</a>
+
+<div class="hero">
+  <div class="kicker">chandler // north georgia</div>
+  <h1>i learn by <em><span id="rotator">patterns</span></em><span class="cursor"></span></h1>
+  <p class="sub">IT student at Kennesaw State, A.S. in Cybersecurity from Lanier Tech. I run a home SOC that detects, enriches and blocks real attackers on its own.</p>
+  <div class="badges">
+    <span class="badge ok"><span class="dot"></span>LAB ONLINE</span>
+    <span class="badge"><b>SIEM</b>WAZUH</span>
+    <span class="badge"><b>SOAR</b>n8n + OPNsense</span>
+    <span class="badge crit"><b>HONEYPOT</b>LIVE</span>
+  </div>
+</div>
+
+<div class="topo-wrap">
+  <div class="topo-label"><b>● online</b> &nbsp;//&nbsp; live network topology</div>
+  <div class="topo">
+<svg viewBox="0 0 1000 760" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Home lab network topology">
+<defs>
+<pattern id="g" width="25" height="25" patternUnits="userSpaceOnUse"><path d="M25 0H0V25" fill="none" stroke="#2d8cff" stroke-opacity=".05"/></pattern>
+<filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<path id="pAtk" d="M500 64 L500 104 L500 170 L500 238 L140 322"/>
+<path id="pLog" d="M210 400 C 240 430, 330 430, 360 400"/>
+<path id="pAlr" d="M450 400 C 480 430, 570 430, 600 400"/>
+<path id="pBlk" d="M560 322 C 600 280, 720 250, 660 200"/>
+<path id="pVpn" d="M520 58 C 610 90, 632 130, 632 166"/>
+<path id="pTrk" d="M500 448 L500 506"/>
+<path id="pAp1" d="M500 548 L200 618"/><path id="pDsk" d="M500 548 L500 618"/><path id="pAp2" d="M500 548 L800 618"/>
+</defs>
+<rect width="1000" height="760" fill="url(#g)"/>
+<circle cx="500" cy="40" r="22" fill="none" stroke="#5f7194" stroke-width="1.3"/><ellipse cx="500" cy="40" rx="9" ry="22" fill="none" stroke="#5f7194"/><line x1="478" y1="40" x2="522" y2="40" stroke="#5f7194"/>
+<text x="560" y="30" text-anchor="start" font-size="10" font-family="'Share Tech Mono',monospace" fill="#5f7194" font-weight="400" letter-spacing="2">INTERNET</text>
+<text x="560" y="44" text-anchor="start" font-size="8.5" font-family="'Share Tech Mono',monospace" fill="#5f7194" font-weight="400" letter-spacing="0">attackers + WireGuard peers</text>
+<line x1="500" y1="62" x2="500" y2="88" stroke="#5f7194" stroke-dasharray="3 3"/>
+<polygon points="430,88 562,88 570,96 570,114 430,114" fill="#0a1020" stroke="#1c2c4a"/>
+<text x="500" y="105" text-anchor="middle" font-size="10" font-family="'Share Tech Mono',monospace" fill="#5f7194" font-weight="400" letter-spacing="1.5">AT&amp;T FIBER</text>
+<line x1="500" y1="114" x2="500" y2="150" stroke="#5f7194" stroke-dasharray="3 3"/>
+<path d="M520 58 C 610 90, 632 130, 632 166" fill="none" stroke="#3dffb4" stroke-opacity=".55" stroke-dasharray="2 4"/>
+<text x="650" y="112" text-anchor="start" font-size="8.5" font-family="'Share Tech Mono',monospace" fill="#3dffb4" font-weight="400" letter-spacing="0.5">WireGuard</text>
+<text x="650" y="124" text-anchor="start" font-size="8" font-family="'Share Tech Mono',monospace" fill="#5f7194" font-weight="400" letter-spacing="0">split tunnel</text>
+<polygon points="30,150 952,150 970,168 970,448 30,448" fill="#2d8cff" fill-opacity=".03" stroke="#2d8cff" stroke-opacity=".45" stroke-dasharray="6 4"/>
+<text x="48" y="170" text-anchor="start" font-size="9.5" font-family="'Share Tech Mono',monospace" fill="#2d8cff" font-weight="400" letter-spacing="2">ATLAS // BEELINK EQ12 // PROXMOX VE</text>
+<polygon points="340,166 648,166 660,178 660,216 340,216" fill="#8fd3ff" fill-opacity="0.08" stroke="#8fd3ff" stroke-opacity=".55" stroke-width="1.2"/>
+<rect x="340" y="166" width="3" height="50" fill="#8fd3ff"/>
+<text x="500.0" y="189.0" text-anchor="middle" font-size="17" font-family="Rajdhani,sans-serif" fill="#dbe6ff" font-weight="700" letter-spacing="2">AEGIS // OPNsense</text>
+<text x="500.0" y="204.0" text-anchor="middle" font-size="9" font-family="'Share Tech Mono',monospace" fill="#8fd3ff" font-weight="400" letter-spacing="0.5">firewall · inter-VLAN routing · SOAR_BLOCK</text>
+<line x1="500" y1="216" x2="500" y2="232" stroke="#8fd3ff" stroke-opacity=".6"/>
+<rect x="290" y="232" width="420" height="22" fill="#0a1020" stroke="#1c2c4a" stroke-dasharray="4 3"/>
+<text x="500" y="247" text-anchor="middle" font-size="9.5" font-family="'Share Tech Mono',monospace" fill="#5f7194" font-weight="400" letter-spacing="1">vmbr0 · 802.1Q virtual bridge</text>
+<line x1="500" y1="254" x2="140" y2="322" stroke="#ff3d6e" stroke-opacity=".5" stroke-dasharray="3 3"/>
+<line x1="500" y1="254" x2="320" y2="322" stroke="#b46bff" stroke-opacity=".5" stroke-dasharray="3 3"/>
+<line x1="500" y1="254" x2="500" y2="322" stroke="#b46bff" stroke-opacity=".5" stroke-dasharray="3 3"/>
+<line x1="500" y1="254" x2="680" y2="322" stroke="#b46bff" stroke-opacity=".5" stroke-dasharray="3 3"/>
+<line x1="500" y1="254" x2="860" y2="322" stroke="#3dffb4" stroke-opacity=".5" stroke-dasharray="3 3"/>
+<polygon points="60,322 208,322 220,334 220,400 60,400" fill="#ff3d6e" fill-opacity="0.07" stroke="#ff3d6e" stroke-opacity=".55" stroke-width="1.2"/>
+<rect x="60" y="322" width="3" height="78" fill="#ff3d6e"/>
+<text x="140.0" y="346" text-anchor="middle" font-size="17" font-family="Rajdhani,sans-serif" fill="#dbe6ff" font-weight="700" letter-spacing="2">DOLOS</text>
+<text x="140.0" y="362" text-anchor="middle" font-size="9" font-family="'Share Tech Mono',monospace" fill="#ff3d6e" font-weight="400" letter-spacing="0.5">Cowrie honeypot</text>
+<rect x="111.3" y="378" width="57.4" height="15" fill="none" stroke="#ff3d6e" stroke-opacity=".5"/>
+<text x="140.0" y="389" text-anchor="middle" font-size="8.5" font-family="'Share Tech Mono',monospace" fill="#ff3d6e" font-weight="400" letter-spacing="1">VLAN 20</text>
+<polygon points="240,322 388,322 400,334 400,400 240,400" fill="#b46bff" fill-opacity="0.07" stroke="#b46bff" stroke-opacity=".55" stroke-width="1.2"/>
+<rect x="240" y="322" width="3" height="78" fill="#b46bff"/>
+<text x="320.0" y="346" text-anchor="middle" font-size="17" font-family="Rajdhani,sans-serif" fill="#dbe6ff" font-weight="700" letter-spacing="2">HERMES</text>
+<text x="320.0" y="362" text-anchor="middle" font-size="9" font-family="'Share Tech Mono',monospace" fill="#b46bff" font-weight="400" letter-spacing="0.5">Wazuh SIEM</text>
+<rect x="291.3" y="378" width="57.4" height="15" fill="none" stroke="#b46bff" stroke-opacity=".5"/>
+<text x="320.0" y="389" text-anchor="middle" font-size="8.5" font-family="'Share Tech Mono',monospace" fill="#b46bff" font-weight="400" letter-spacing="1">VLAN 30</text>
+<polygon points="420,322 568,322 580,334 580,400 420,400" fill="#b46bff" fill-opacity="0.07" stroke="#b46bff" stroke-opacity=".55" stroke-width="1.2"/>
+<rect x="420" y="322" width="3" height="78" fill="#b46bff"/>
+<text x="500.0" y="346" text-anchor="middle" font-size="17" font-family="Rajdhani,sans-serif" fill="#dbe6ff" font-weight="700" letter-spacing="2">IRIS</text>
+<text x="500.0" y="362" text-anchor="middle" font-size="9" font-family="'Share Tech Mono',monospace" fill="#b46bff" font-weight="400" letter-spacing="0.5">n8n · Uptime Kuma</text>
+<rect x="471.3" y="378" width="57.4" height="15" fill="none" stroke="#b46bff" stroke-opacity=".5"/>
+<text x="500.0" y="389" text-anchor="middle" font-size="8.5" font-family="'Share Tech Mono',monospace" fill="#b46bff" font-weight="400" letter-spacing="1">VLAN 30</text>
+<polygon points="600,322 748,322 760,334 760,400 600,400" fill="#b46bff" fill-opacity="0.07" stroke="#b46bff" stroke-opacity=".55" stroke-width="1.2"/>
+<rect x="600" y="322" width="3" height="78" fill="#b46bff"/>
+<text x="680.0" y="346" text-anchor="middle" font-size="17" font-family="Rajdhani,sans-serif" fill="#dbe6ff" font-weight="700" letter-spacing="2">ATLAS</text>
+<text x="680.0" y="362" text-anchor="middle" font-size="9" font-family="'Share Tech Mono',monospace" fill="#b46bff" font-weight="400" letter-spacing="0.5">Proxmox host</text>
+<rect x="651.3" y="378" width="57.4" height="15" fill="none" stroke="#b46bff" stroke-opacity=".5"/>
+<text x="680.0" y="389" text-anchor="middle" font-size="8.5" font-family="'Share Tech Mono',monospace" fill="#b46bff" font-weight="400" letter-spacing="1">VLAN 30</text>
+<polygon points="780,322 928,322 940,334 940,400 780,400" fill="#3dffb4" fill-opacity="0.07" stroke="#3dffb4" stroke-opacity=".55" stroke-width="1.2"/>
+<rect x="780" y="322" width="3" height="78" fill="#3dffb4"/>
+<text x="860.0" y="346" text-anchor="middle" font-size="17" font-family="Rajdhani,sans-serif" fill="#dbe6ff" font-weight="700" letter-spacing="2">ATHENA</text>
+<text x="860.0" y="362" text-anchor="middle" font-size="9" font-family="'Share Tech Mono',monospace" fill="#3dffb4" font-weight="400" letter-spacing="0.5">Parrot OS · OSINT</text>
+<rect x="831.3" y="378" width="57.4" height="15" fill="none" stroke="#3dffb4" stroke-opacity=".5"/>
+<text x="860.0" y="389" text-anchor="middle" font-size="8.5" font-family="'Share Tech Mono',monospace" fill="#3dffb4" font-weight="400" letter-spacing="1">VLAN 50</text>
+<path d="M210 400 C 240 430, 330 430, 360 400" fill="none" stroke="#b46bff" stroke-opacity=".6" stroke-width="1.3"/>
+<path d="M450 400 C 480 430, 570 430, 600 400" fill="none" stroke="#b46bff" stroke-opacity=".6" stroke-width="1.3"/>
+<text x="285" y="436" text-anchor="middle" font-size="8.5" font-family="'Share Tech Mono',monospace" fill="#b46bff" font-weight="400" letter-spacing="0">logs</text>
+<text x="525" y="436" text-anchor="middle" font-size="8.5" font-family="'Share Tech Mono',monospace" fill="#b46bff" font-weight="400" letter-spacing="0">alerts</text>
+<path d="M560 322 C 600 280, 720 250, 660 200" fill="none" stroke="#ff3d6e" stroke-opacity=".7" stroke-width="1.3" stroke-dasharray="5 3"/>
+<text x="712" y="238" text-anchor="start" font-size="8.5" font-family="'Share Tech Mono',monospace" fill="#ff3d6e" font-weight="400" letter-spacing="0">auto-block</text>
+<text x="712" y="250" text-anchor="start" font-size="8" font-family="'Share Tech Mono',monospace" fill="#5f7194" font-weight="400" letter-spacing="0">SOAR playbook</text>
+<line x1="500" y1="448" x2="500" y2="506" stroke="#8fd3ff" stroke-width="3" stroke-opacity=".8"/>
+<text x="512" y="482" text-anchor="start" font-size="8.5" font-family="'Share Tech Mono',monospace" fill="#8fd3ff" font-weight="400" letter-spacing="1">802.1Q TRUNK · P1</text>
+<polygon points="360,506 628,506 640,518 640,548 360,548" fill="#8fd3ff" fill-opacity="0.06" stroke="#8fd3ff" stroke-opacity=".55" stroke-width="1.2"/>
+<rect x="360" y="506" width="3" height="42" fill="#8fd3ff"/>
+<text x="500.0" y="525.0" text-anchor="middle" font-size="17" font-family="Rajdhani,sans-serif" fill="#dbe6ff" font-weight="700" letter-spacing="2">TL-SG108E</text>
+<text x="500.0" y="540.0" text-anchor="middle" font-size="9" font-family="'Share Tech Mono',monospace" fill="#8fd3ff" font-weight="400" letter-spacing="0.5">managed switch · P2 AP1 · P3 AP2 · P8 desktop</text>
+<line x1="500" y1="548" x2="200" y2="618" stroke="#2d8cff" stroke-width="1.6" stroke-opacity=".75"/>
+<line x1="500" y1="548" x2="500" y2="618" stroke="#2d8cff" stroke-width="1.6" stroke-opacity=".75"/>
+<line x1="500" y1="548" x2="800" y2="618" stroke="#ffb020" stroke-width="1.6" stroke-opacity=".75"/>
+<polygon points="100,618 288,618 300,630 300,690 100,690" fill="#2d8cff" fill-opacity="0.07" stroke="#2d8cff" stroke-opacity=".55" stroke-width="1.2"/>
+<rect x="100" y="618" width="3" height="72" fill="#2d8cff"/>
+<text x="200.0" y="642" text-anchor="middle" font-size="17" font-family="Rajdhani,sans-serif" fill="#dbe6ff" font-weight="700" letter-spacing="2">ACCESS POINT 1</text>
+<text x="200.0" y="658" text-anchor="middle" font-size="9" font-family="'Share Tech Mono',monospace" fill="#2d8cff" font-weight="400" letter-spacing="0.5">5 GHz WiFi</text>
+<rect x="140.3" y="668" width="119.4" height="15" fill="none" stroke="#2d8cff" stroke-opacity=".5"/>
+<text x="200.0" y="679" text-anchor="middle" font-size="8.5" font-family="'Share Tech Mono',monospace" fill="#2d8cff" font-weight="400" letter-spacing="1">VLAN 10 · TRUSTED</text>
+<polygon points="400,618 588,618 600,630 600,690 400,690" fill="#2d8cff" fill-opacity="0.07" stroke="#2d8cff" stroke-opacity=".55" stroke-width="1.2"/>
+<rect x="400" y="618" width="3" height="72" fill="#2d8cff"/>
+<text x="500.0" y="642" text-anchor="middle" font-size="17" font-family="Rajdhani,sans-serif" fill="#dbe6ff" font-weight="700" letter-spacing="2">DESKTOP</text>
+<text x="500.0" y="658" text-anchor="middle" font-size="9" font-family="'Share Tech Mono',monospace" fill="#2d8cff" font-weight="400" letter-spacing="0.5">wired · P8</text>
+<rect x="440.3" y="668" width="119.4" height="15" fill="none" stroke="#2d8cff" stroke-opacity=".5"/>
+<text x="500.0" y="679" text-anchor="middle" font-size="8.5" font-family="'Share Tech Mono',monospace" fill="#2d8cff" font-weight="400" letter-spacing="1">VLAN 10 · TRUSTED</text>
+<polygon points="700,618 888,618 900,630 900,690 700,690" fill="#ffb020" fill-opacity="0.07" stroke="#ffb020" stroke-opacity=".55" stroke-width="1.2"/>
+<rect x="700" y="618" width="3" height="72" fill="#ffb020"/>
+<text x="800.0" y="642" text-anchor="middle" font-size="17" font-family="Rajdhani,sans-serif" fill="#dbe6ff" font-weight="700" letter-spacing="2">ACCESS POINT 2</text>
+<text x="800.0" y="658" text-anchor="middle" font-size="9" font-family="'Share Tech Mono',monospace" fill="#ffb020" font-weight="400" letter-spacing="0.5">2.4 GHz WiFi</text>
+<rect x="752.7" y="668" width="94.60000000000001" height="15" fill="none" stroke="#ffb020" stroke-opacity=".5"/>
+<text x="800.0" y="679" text-anchor="middle" font-size="8.5" font-family="'Share Tech Mono',monospace" fill="#ffb020" font-weight="400" letter-spacing="1">VLAN 40 · IoT</text>
+<line x1="200" y1="690" x2="200" y2="712" stroke="#2d8cff" stroke-opacity=".5" stroke-dasharray="2 3"/>
+<rect x="120" y="712" width="160" height="26" fill="none" stroke="#1c2c4a" stroke-dasharray="3 3"/>
+<text x="200" y="729" text-anchor="middle" font-size="9" font-family="'Share Tech Mono',monospace" fill="#5f7194" font-weight="400" letter-spacing="0">laptops · phones</text>
+<line x1="800" y1="690" x2="800" y2="712" stroke="#ffb020" stroke-opacity=".5" stroke-dasharray="2 3"/>
+<rect x="720" y="712" width="160" height="26" fill="none" stroke="#1c2c4a" stroke-dasharray="3 3"/>
+<text x="800" y="729" text-anchor="middle" font-size="9" font-family="'Share Tech Mono',monospace" fill="#5f7194" font-weight="400" letter-spacing="0">Hue hub · IoT devices</text>
+<circle r="3.2" fill="#ff3d6e" filter="url(#glow)" class="packet"><animateMotion dur="3.2s" begin="-0s" repeatCount="indefinite" rotate="auto"><mpath href="#pAtk"/></animateMotion></circle>
+<circle r="2.6" fill="#ff3d6e" filter="url(#glow)" class="packet"><animateMotion dur="3.2s" begin="-1.6s" repeatCount="indefinite" rotate="auto"><mpath href="#pAtk"/></animateMotion></circle>
+<circle r="3.2" fill="#b46bff" filter="url(#glow)" class="packet"><animateMotion dur="1.6s" begin="-0.3s" repeatCount="indefinite" rotate="auto"><mpath href="#pLog"/></animateMotion></circle>
+<circle r="3.2" fill="#b46bff" filter="url(#glow)" class="packet"><animateMotion dur="1.6s" begin="-1.1s" repeatCount="indefinite" rotate="auto"><mpath href="#pAlr"/></animateMotion></circle>
+<circle r="2.8" fill="#ff3d6e" filter="url(#glow)" class="packet"><animateMotion dur="2.2s" begin="-0.8s" repeatCount="indefinite" rotate="auto"><mpath href="#pBlk"/></animateMotion></circle>
+<circle r="2.4" fill="#3dffb4" filter="url(#glow)" class="packet"><animateMotion dur="2.8s" begin="-0.5s" repeatCount="indefinite" rotate="auto"><mpath href="#pVpn"/></animateMotion></circle>
+<circle r="3.2" fill="#8fd3ff" filter="url(#glow)" class="packet"><animateMotion dur="1.4s" begin="-0s" repeatCount="indefinite" rotate="auto"><mpath href="#pTrk"/></animateMotion></circle>
+<circle r="2.6" fill="#2d8cff" filter="url(#glow)" class="packet"><animateMotion dur="1.9s" begin="-0.4s" repeatCount="indefinite" rotate="auto"><mpath href="#pAp1"/></animateMotion></circle>
+<circle r="2.6" fill="#2d8cff" filter="url(#glow)" class="packet"><animateMotion dur="1.5s" begin="-0.9s" repeatCount="indefinite" rotate="auto"><mpath href="#pDsk"/></animateMotion></circle>
+<circle r="2.6" fill="#ffb020" filter="url(#glow)" class="packet"><animateMotion dur="2.3s" begin="-1.2s" repeatCount="indefinite" rotate="auto"><mpath href="#pAp2"/></animateMotion></circle>
+</svg>
+  </div>
+  <div class="topo-legend">
+    <div class="topo-legend-vlans">
+      <span class="tl-item"><span class="tl-dot" style="background:#2d8cff;color:#2d8cff"></span>VLAN 10 · TRUSTED</span>
+      <span class="tl-item"><span class="tl-dot" style="background:#ff3d6e;color:#ff3d6e"></span>VLAN 20 · HONEYPOT</span>
+      <span class="tl-item"><span class="tl-dot" style="background:#b46bff;color:#b46bff"></span>VLAN 30 · MGMT</span>
+      <span class="tl-item"><span class="tl-dot" style="background:#ffb020;color:#ffb020"></span>VLAN 40 · IoT</span>
+      <span class="tl-item"><span class="tl-dot" style="background:#3dffb4;color:#3dffb4"></span>VLAN 50 · OSINT</span>
+    </div>
+    <a href="logbook.html" class="tl-btn">view lab evidence →</a>
+  </div>
+</div>
+
+<section id="about">
+  <div class="sec-head" data-n="01">about</div>
+  <div class="about-grid">
+    <div>
+      <p>Always loved tech growing up — as a kid I was fixing the router, picking the hacker class in every co-op game, figuring out how things work just to see if I could and because it was fun.</p>
+      <p>Now I'm studying <strong>IT at Kennesaw State</strong> after finishing an <strong>A.S. in Cybersecurity at Lanier Tech</strong>, building out a home lab that I treat like a production network.</p>
+      <p>I learn by patterns and puzzles. Cybersecurity clicked because that's the whole job: figure out how the system works, find where it's weak, solve it.</p>
+    </div>
+    <div class="facts card">
+      <div><span class="k">degree</span><span class="v">B.A.S. IT · KSU</span></div>
+      <div><span class="k">prior</span><span class="v">A.S. Cybersecurity</span></div>
+      <div><span class="k">practice</span><span class="v">TryHackMe / CTFs</span></div>
+      <div><span class="k">grad target</span><span class="v">Fall 2027</span></div>
+      <div><span class="k">location</span><span class="v">north georgia</span></div>
     </div>
   </div>
- 
-  <!-- ══════════════════════════════════════════
-       SECTION 1: LAB INFRASTRUCTURE
-  ══════════════════════════════════════════ -->
-  <section class="lb-section" id="infrastructure">
-    <div class="section-label">
-      <span class="section-num">01</span>
-      <div class="section-divider"></div>
-    </div>
-    <h2 class="section-title">Lab Infrastructure</h2>
-    <p class="section-intro">
-      The entire stack runs on a single physical host. Building it from scratch —
-      rather than using a managed service — means owning every configuration decision,
-      from hypervisor to VLAN tagging to firewall policy.
-    </p>
- 
-    <div class="evidence-stack">
-      <div class="evidence-pair">
- 
-        <div class="ev-card">
-          <div class="ev-img-wrap">
-            <a href="atlas.png" target="_blank" title="Click to view full size"><img src="atlas.png" alt="Proxmox VE VM inventory showing five VMs" loading="lazy"></a>
-          </div>
-          <div class="ev-body">
-            <div class="ev-title">PROXMOX VE · VM INVENTORY</div>
-            <p class="ev-caption">
-              Virtual machines running concurrently on a single physical host: the OPNsense
-              firewall, Wazuh SIEM manager, Cowrie honeypot, the Parrot OS OSINT workstation
-              on its own isolated VLAN, and supporting services.
-              Uptime across the board confirms persistent operation, not a one-time demo.
-            </p>
-          </div>
-        </div>
- 
-        <div class="ev-card">
-          <div class="ev-img-wrap">
-            <a href="switch-vlan-config.png" target="_blank" title="Click to view full size"><img src="switch-vlan-config.png" alt="TL-SG108E 802.1Q VLAN configuration table" loading="lazy"></a>
-          </div>
-          <div class="ev-body">
-            <div class="ev-title">802.1Q VLAN CONFIG · MANAGED SWITCH</div>
-            <p class="ev-caption">
-              VLANs 10 (Trusted), 20 (Honeypot), 30 (Management), 40 (IoT), and 50 (OSINT)
-              defined with explicit tagged/untagged port assignments. Port 1 carries the
-              802.1Q trunk to the router; each downstream port lands on exactly one VLAN.
-              Management and OSINT exist only as tagged VLANs on the trunk, so they are
-              reachable from VMs but have no physical port at all.
-            </p>
-          </div>
-        </div>
- 
-      </div>
-    </div>
-  </section>
- 
-  <!-- ══════════════════════════════════════════
-       SECTION 2: NETWORK SECURITY ARCHITECTURE
-  ══════════════════════════════════════════ -->
-  <section class="lb-section" id="network">
-    <div class="section-label">
-      <span class="section-num">02</span>
-      <div class="section-divider"></div>
-    </div>
-    <h2 class="section-title">Network Security Architecture</h2>
-    <p class="section-intro">
-      Every rule in the firewall was written intentionally. Inbound SSH is redirected to
-      the honeypot via NAT. The Trusted VLAN is explicitly blocked from reaching the
-      Honeypot network. These aren't defaults — they're design decisions you can read
-      directly from the ruleset.
-    </p>
- 
-    <div class="evidence-stack">
- 
-      <div class="ev-card">
-        <div class="ev-img-wrap">
-          <a href="opnsense-fw-rules.png" target="_blank" title="Click to view full size"><img src="opnsense-fw-rules.png" alt="OPNsense firewall rules showing deliberate segmentation" loading="lazy"></a>
-        </div>
-        <div class="ev-body">
-          <div class="ev-title">OPNSENSE · FIREWALL RULES</div>
-          <p class="ev-caption">
-            The ruleset shows deliberate segmentation: inbound SSH from WAN is passed
-            to the honeypot, Trusted network is explicitly blocked from reaching
-            Honeypot network, and a separate rule gates admin access to the Cowrie
-            VM on a non-standard port. Rule descriptions are written to be auditable.
-          </p>
-        </div>
-      </div>
- 
-      <div class="ev-card">
-        <div class="ev-img-wrap">
-          <a href="opnsense-fw-logs.png" target="_blank" title="Click to view full size"><img src="opnsense-fw-logs.png" alt="OPNsense live firewall log showing inbound SSH hits and NAT redirect" loading="lazy"></a>
-        </div>
-        <div class="ev-body">
-          <div class="ev-title">OPNSENSE · LIVE FIREWALL LOG <span class="ev-tag red">live traffic</span></div>
-          <p class="ev-caption">
-            Live log showing real external IPs matching <code>Allow inbound SSH to honeypot</code>
-            and triggering the <code>rdr</code> redirect. Each inbound connection generates
-            three log lines — WAN in, NAT redirect, and Honeypot out — confirming the
-            full redirect chain is functioning. Destination IPs are redacted.
-          </p>
-        </div>
-      </div>
- 
-    </div>
-  </section>
- 
-  <!-- ══════════════════════════════════════════
-       SECTION 3: THREAT DETECTION & SIEM
-  ══════════════════════════════════════════ -->
-  <section class="lb-section" id="siem">
-    <div class="section-label">
-      <span class="section-num">03</span>
-      <div class="section-divider"></div>
-    </div>
-    <h2 class="section-title">Threat Detection &amp; SIEM</h2>
-    <p class="section-intro">
-      Wazuh aggregates logs from across the lab and correlates them against MITRE
-      ATT&amp;CK. The dashboards below were built to give a quick operational read on
-      threat volume, attack technique distribution, and honeypot activity.
-    </p>
- 
-    <div class="evidence-stack">
- 
-      <div class="ev-card">
-        <div class="ev-img-wrap">
-          <a href="wazuhAlert.png" target="_blank" title="Click to view full size"><img src="wazuhAlert.png" alt="Custom SOC dashboard showing 43,104 total alerts and 42,184 honeypot alerts" loading="lazy"></a>
-        </div>
-        <div class="ev-body">
-          <div class="ev-title">WAZUH · CUSTOM SOC DASHBOARD</div>
-          <p class="ev-caption">
-            43,104 total alerts in the last 24 hours; 42,184 (97.9%) from the honeypot.
-            Top destination port is SSH at 100% — the entire exposed attack surface is
-            deliberate and contained. The dashboard was built to give a one-glance read
-            on honeypot activity versus everything else.
-          </p>
-        </div>
-      </div>
- 
-      <div class="evidence-pair">
- 
-        <div class="ev-card">
-          <div class="ev-img-wrap">
-            <a href="DolosDashboard.png" target="_blank" title="Click to view full size"><img src="DolosDashboard.png" alt="Wazuh agent overview for DolosHoney showing MITRE ATT&CK tactic counts" loading="lazy"></a>
-          </div>
-          <div class="ev-body">
-            <div class="ev-title">WAZUH · AGENT OVERVIEW · DOLOS</div>
-            <p class="ev-caption">
-              MITRE tactic distribution over 24 hours: Execution at 8,292 events, with
-              Defense Evasion, Initial Access, Persistence, and Privilege Escalation
-              each at 4,673 — a pattern consistent with credential stuffing followed by
-              automated post-login enumeration.
-            </p>
-          </div>
-        </div>
- 
-        <div class="ev-card">
-          <div class="ev-img-wrap">
-            <a href="DolosMttrAttakdashboard.png" target="_blank" title="Click to view full size"><img src="DolosMttrAttakdashboard.png" alt="Wazuh MITRE ATT&CK dashboard showing attack technique distribution and alert cadence" loading="lazy"></a>
-          </div>
-          <div class="ev-body">
-            <div class="ev-title">WAZUH · MITRE ATT&amp;CK DASHBOARD</div>
-            <p class="ev-caption">
-              Filtered to agent 004 (DolosHoney). The alert cadence chart shows repeated
-              burst cycles; the bar chart breaks down attack volume by MITRE tactic.
-              Seeing the pattern — not just individual alerts — is what distinguishes
-              detection from monitoring.
-            </p>
-          </div>
-        </div>
- 
-      </div>
-    </div>
-  </section>
- 
-  <!-- ══════════════════════════════════════════
-       SECTION 4: INCIDENT ANALYSIS
-  ══════════════════════════════════════════ -->
-  <section class="lb-section" id="incident">
-    <div class="section-label">
-      <span class="section-num">04</span>
-      <div class="section-divider"></div>
-    </div>
-    <h2 class="section-title">Incident Analysis</h2>
-    <p class="section-intro">
-      A complete session trace — from first packet to attacker command — reconstructed
-      from Wazuh logs and Cowrie's session recorder. Every step is timestamped and
-      mapped to a MITRE technique.
-    </p>
- 
-    <div class="evidence-stack">
- 
-      <div class="ev-card">
-        <div class="ev-img-wrap">
-          <a href="wazuh-doc-dashboard.png" target="_blank" title="Click to view full size"><img src="wazuh-doc-dashboard.png" alt="Wazuh threat hunting view showing the full attack session chain for session 4c40cac87e6f" loading="lazy"></a>
-        </div>
-        <div class="ev-body">
-          <div class="ev-title">WAZUH THREAT HUNTING · SESSION CHAIN <span class="ev-tag red">session 4c40cac87e6f</span></div>
-          <p class="ev-caption">
-            Full attack session reconstructed in Wazuh's threat hunting view. Reading
-            bottom-to-top: key exchange, login success, session parameters, attacker
-            command input (<code>uname -s -v -n -r -m</code>), TTY log closed, session closed.
-            All events within the same session ID, timestamped within milliseconds of
-            each other.
-          </p>
-        </div>
-      </div>
- 
-      <div class="evidence-pair">
- 
-        <div class="ev-card">
-          <div class="ev-img-wrap">
-            <a href="doloseventid.png" target="_blank" title="Click to view full size"><img src="doloseventid.png" alt="Wazuh Discover showing cowrie.login.success event with T1078 mapping" loading="lazy"></a>
-          </div>
-          <div class="ev-body">
-            <div class="ev-title">WAZUH · LOGIN ALERT DETAIL <span class="ev-tag red">T1078</span></div>
-            <p class="ev-caption">
-              Alert detail for a <code>cowrie.login.success</code> event. Attacker from
-              <code>109.160.32.149</code> authenticated with <code>support / support123</code> —
-              a default credential pair. Mapped to MITRE T1078 (Valid Accounts) with
-              tactics covering Defense Evasion, Persistence, Privilege Escalation, and
-              Initial Access. Rule level 14 triggered an email alert.
-            </p>
-          </div>
-        </div>
- 
-        <div class="ev-card">
-          <div class="ev-img-wrap">
-            <a href="honeypotattackproof.png" target="_blank" title="Click to view full size"><img src="honeypotattackproof.png" alt="Cowrie playlog terminal showing attacker ran uname command against fake Debian host" loading="lazy"></a>
-          </div>
-          <div class="ev-body">
-            <div class="ev-title">COWRIE · SESSION REPLAY <span class="ev-tag green">captured</span></div>
-            <p class="ev-caption">
-              Attacker session replayed via Cowrie's <code>playlog</code> tool. Immediately
-              after login, the attacker ran <code>uname -s -v -n -r -m</code> — standard
-              system fingerprinting. Cowrie returned a fabricated Debian host identity
-              (<code>webserver01</code>). The full TTY session was recorded without the
-              attacker's knowledge.
-            </p>
-          </div>
-        </div>
- 
-      </div>
-    </div>
-  </section>
- 
-  <!-- ══════════════════════════════════════════
-       SECTION 5: OSINT & THREAT INTELLIGENCE
-  ══════════════════════════════════════════ -->
-  <section class="lb-section" id="osint">
-    <div class="section-label">
-      <span class="section-num">05</span>
-      <div class="section-divider"></div>
-    </div>
-    <h2 class="section-title">OSINT &amp; Threat Intelligence</h2>
-    <p class="section-intro">
-      When a local organization was hit by Interlock ransomware, I built a dedicated
-      research segment to investigate it safely: VLAN 50 is firewalled off from every
-      internal network, egresses only through a VPN, and runs a Parrot OS workstation with
-      Tor Browser. From there I corroborated the ransom note's negotiation portal against
-      ransomware.live's infrastructure data and monitored the group's leak site for a
-      victim posting. The victim is deliberately not identified anywhere on this page.
-    </p>
- 
-    <div class="evidence-stack">
- 
-      <div class="evidence-pair">
- 
-        <div class="ev-card">
-          <div class="ev-img-wrap">
-            <a href="athena-vm.png" title="Click to view full size"><img src="athena-vm.png" alt="Proxmox hardware view of the Athena VM on VLAN tag 50 with Parrot Security ISO" loading="lazy"></a>
-          </div>
-          <div class="ev-body">
-            <div class="ev-title">PROXMOX · ATHENA · OSINT WORKSTATION <span class="ev-tag green">VLAN 50</span></div>
-            <p class="ev-caption">
-              Parrot Security VM (<code>Athena</code>) with its NIC tagged <code>tag=50</code> on
-              <code>vmbr0</code>, so it lands on the OSINT VLAN with no path to Trusted,
-              Management, or Honeypot. Nothing of value lives on it, so it can be rebuilt
-              from the ISO at any time.
-            </p>
-          </div>
-        </div>
- 
-        <div class="ev-card">
-          <div class="ev-img-wrap">
-            <a href="osint-fw-rules.png" title="Click to view full size"><img src="osint-fw-rules.png" alt="OPNsense firewall rules for the OSINT VLAN blocking all RFC1918 destinations and allowing WAN egress" loading="lazy"></a>
-          </div>
-          <div class="ev-body">
-            <div class="ev-title">OPNSENSE · OSINT VLAN RULESET</div>
-            <p class="ev-caption">
-              Two rules, evaluated top down: a block from <code>OSINT network</code> to an
-              <code>RFC1918</code> alias covering <code>10/8</code>, <code>172.16/12</code>, and
-              <code>192.168/16</code>, then an allow to anywhere. A compromised research box
-              can reach the internet and nothing inside the lab. Traffic then leaves through
-              IPVanish before Tor, so neither the VPN nor the exit node sees both ends.
-            </p>
-          </div>
-        </div>
- 
-      </div>
- 
-      <div class="evidence-pair">
- 
-        <div class="ev-card">
-          <div class="ev-img-wrap">
-            <a href="interlock-infra.png" title="Click to view full size"><img src="interlock-infra.png" alt="ransomware.live known locations for Interlock showing the group's onion address" loading="lazy"></a>
-          </div>
-          <div class="ev-body">
-            <div class="ev-title">RANSOMWARE.LIVE · INFRASTRUCTURE CORROBORATION <span class="ev-tag red">interlock</span></div>
-            <p class="ev-caption">
-              The ransom note pointed to a <code>.onion</code> negotiation portal at
-              <code>/chat.php</code>. ransomware.live lists the same host as Interlock's known
-              infrastructure, with the leak site at <code>/leaks.php</code>. Matching the note's
-              address to independently tracked group infrastructure confirmed attribution
-              without touching the victim's systems.
-            </p>
-          </div>
-        </div>
- 
-        <div class="ev-card">
-          <div class="ev-img-wrap">
-            <a href="interlock-leaksite.png" title="Click to view full size"><img src="interlock-leaksite.png" alt="Interlock leak site About page viewed over Tor" loading="lazy"></a>
-          </div>
-          <div class="ev-body">
-            <div class="ev-title">TOR · ADVERSARY LEAK SITE</div>
-            <p class="ev-caption">
-              The group's leak site, reached over Tor from the OSINT VLAN. Interlock frames
-              itself as punishing negligence rather than extorting; the same templated
-              language shows up in every ransom note. Monitoring here is how you learn
-              whether negotiations failed, because victims appear on the leak page before
-              any public notification.
-            </p>
-          </div>
-        </div>
- 
-      </div>
-    </div>
-  </section>
- 
+</section>
 
-  <!-- ══════════════════════════════════════════
-       SECTION 6: SOC AUTOMATION
-  ══════════════════════════════════════════ -->
-  <section class="lb-section" id="soc">
-    <div class="section-label">
-      <span class="section-num">06</span>
-      <div class="section-divider"></div>
+<section id="skills">
+  <div class="sec-head" data-n="02">skills</div>
+  <div class="skill-cols">
+    <div class="skill-card card">
+      <h3>security</h3>
+      <ul>
+        <li>Wazuh SIEM</li>
+        <li>honeypot deployment</li>
+        <li>network segmentation</li>
+        <li>custom SIEM decoders</li>
+        <li>vulnerability management · CISA KEV</li>
+        <li>OSINT &amp; dark web monitoring</li>
+        <li>Tor / VPN opsec</li>
+        <li>TryHackMe labs</li>
+      </ul>
     </div>
-    <h2 class="section-title">SOC Automation</h2>
-    <p class="section-intro">
-      One screen for the whole lab. Instead of logging into Wazuh, OPNsense and Proxmox one at a
-      time, an n8n pipeline on a dedicated container (<code style="font-family:var(--mono);font-size:12px;color:var(--ice)">Iris</code>)
-      pulls from every system, grades each one with fixed rules, and renders a live view I can check
-      from my desk or my phone. A second workflow acts on what it sees: it blocks attackers at the
-      firewall automatically. Every number below is real traffic from my lab.
-    </p>
-
-    <div class="stat-strip">
-      <div class="stat c"><b>~60K</b><small>honeypot events / day</small></div>
-      <div class="stat o"><b>96%</b><small>critical CVEs patched</small></div>
-      <div class="stat i"><b>0</b><small>CISA KEV on my hosts</small></div>
-      <div class="stat w"><b>24H</b><small>auto-expiring blocks</small></div>
+    <div class="skill-card card auto">
+      <h3>automation · soar</h3>
+      <ul>
+        <li>n8n workflows</li>
+        <li>automated IP blocking</li>
+        <li>AbuseIPDB enrichment</li>
+        <li>OpenSearch queries</li>
+        <li>REST APIs (Wazuh, OPNsense)</li>
+        <li>Uptime Kuma monitoring</li>
+      </ul>
     </div>
-
-    <div class="evidence-stack">
-
-      <div class="ev-card">
-        <div class="ev-img-wrap">
-          <a href="soc-dashboard.png" title="Click to view full size"><img src="soc-dashboard.png" alt="NETRUNNER SOC dashboard overview with attack map, uptime, SOAR blocks and threat snapshot" loading="lazy"></a>
-        </div>
-        <div class="ev-body">
-          <div class="ev-title">NETRUNNER // SOC · LIVE DASHBOARD <span class="ev-tag amber">self-built</span></div>
-          <p class="ev-caption">
-            A self-hosted command center served by n8n. Uptime Kuma reports service health, the Wazuh
-            API reports agent status, and the Wazuh indexer supplies alert counts, MITRE ATT&amp;CK
-            techniques and honeypot activity. Fixed rules grade each system OK, WARN or CRIT, so a glance
-            says whether anything needs a closer look. The page updates itself every 60 seconds without
-            reloading, and is split into Overview, Threats, Vulns and Honeypot tabs.
-          </p>
-        </div>
-      </div>
-
-      <div class="evidence-pair">
-
-        <div class="ev-card">
-          <div class="ev-img-wrap">
-            <a href="soc-soar-block.png" title="Click to view full size"><img src="soc-soar-block.png" alt="OPNsense SOAR_BLOCK alias listing three attacker IPs added automatically" loading="lazy"></a>
-          </div>
-          <div class="ev-body">
-            <div class="ev-title">SOAR PLAYBOOK · AUTOMATED BLOCKLIST <span class="ev-tag red">live</span></div>
-            <p class="ev-caption">
-              The <code>SOAR_BLOCK</code> alias as OPNsense sees it: three repeat attackers, including
-              <code>2.57.122.209</code> and <code>195.178.110.26</code>, added with no manual action.
-              Every 15 minutes n8n queries the indexer for IPs flooding the honeypot, groups neighbors into
-              /24 subnets, checks each against AbuseIPDB, and pushes the bad ones in through the OPNsense API.
-              A block rule at the top of WAN drops everything from the list, a firewall rate limit feeds it
-              between runs, and entries expire after 24 hours so the list never grows forever.
-            </p>
-          </div>
-        </div>
-
-        <div class="ev-card">
-          <div class="ev-img-wrap">
-            <a href="soc-vulns.png" title="Click to view full size"><img src="soc-vulns.png" alt="Vulnerability panel showing CVE counts by severity and CISA KEV cross check" loading="lazy"></a>
-          </div>
-          <div class="ev-body">
-            <div class="ev-title">VULNS · CVE INVENTORY + CISA KEV <span class="ev-tag green">patched</span></div>
-            <p class="ev-caption">
-              Wazuh's vulnerability inventory, cross checked every 6 hours against CISA's Known Exploited
-              Vulnerabilities catalog so actively exploited CVEs float to the top. One patch window on
-              the internet facing honeypot host, mostly removing a stale kernel, took lab wide critical
-              findings from <code>110</code> to <code>4</code>. Of those, the honeypot's two have no vendor
-              fix yet and are being monitored; the desktop's two come from an outdated .NET runtime.
-            </p>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="ev-card">
-        <div class="ev-img-wrap">
-          <a href="soc-n8n-pipeline.png" title="Click to view full size"><img src="soc-n8n-pipeline.png" alt="n8n workflow canvas showing the dashboard data pipeline" loading="lazy"></a>
-        </div>
-        <div class="ev-body">
-          <div class="ev-title">n8n · DATA PIPELINE</div>
-          <p class="ev-caption">
-            Webhook → Wazuh API → Uptime Kuma → indexer search → GeoIP → SOAR blocks → vulnerabilities
-            → threat intel cache → page build. Optional steps fail gracefully, so one unreachable
-            service never takes the dashboard down. The automation reads through a dedicated
-            <code>n8n-reader</code> account that only holds the built-in <code>readall</code> role.
-          </p>
-        </div>
-      </div>
-
+    <div class="skill-card card">
+      <h3>infrastructure</h3>
+      <ul>
+        <li>Proxmox VE · LXC · Docker</li>
+        <li>OPNsense</li>
+        <li>Linux administration · systemd</li>
+        <li>802.1Q VLANs · Router-on-a-Stick</li>
+        <li>WireGuard VPN</li>
+        <li>managed switch config (TL-SG108E)</li>
+      </ul>
     </div>
-  </section>
+    <div class="skill-card card">
+      <h3>tools &amp; code</h3>
+      <ul>
+        <li>Python</li>
+        <li>JavaScript</li>
+        <li>bash</li>
+        <li>Wireshark</li>
+        <li>git / GitHub</li>
+      </ul>
+    </div>
+  </div>
+</section>
 
-</div><!-- /page -->
- 
-<!-- lightbox overlay -->
-<div id="lb-overlay" role="dialog" aria-modal="true">
-  <span id="lb-close" aria-label="Close">✕</span>
-  <img id="lb-img" src="" alt="">
-</div>
- 
+<section id="lab">
+  <div class="sec-head" data-n="03">home lab</div>
+  <div class="lab-rows">
+    <a class="lab-row card" href="logbook.html#infrastructure">
+      <span class="name">atlas</span>
+      <span class="desc">Bare metal Proxmox hypervisor hosting the entire lab as VMs and containers</span>
+      <span class="tag">hypervisor →</span>
+    </a>
+    <a class="lab-row card" href="logbook.html#network">
+      <span class="name">aegis</span>
+      <span class="desc">Virtualized OPNsense firewall handling routing, segmentation, WireGuard and automated blocking</span>
+      <span class="tag">firewall →</span>
+    </a>
+    <a class="lab-row card r30" href="logbook.html#siem">
+      <span class="name">hermes</span>
+      <span class="desc">Wazuh SIEM collecting and correlating logs across the lab, alerting on suspicious activity</span>
+      <span class="tag">siem →</span>
+    </a>
+    <a class="lab-row card r20" href="logbook.html#incident">
+      <span class="name">dolos</span>
+      <span class="desc">Live Cowrie honeypot capturing real attack attempts for analysis and threat intel practice</span>
+      <span class="tag">deception →</span>
+    </a>
+    <a class="lab-row card r50" href="logbook.html#osint">
+      <span class="name">athena</span>
+      <span class="desc">Isolated research segment with Tor and VPN chaining, used for live ransomware group infrastructure analysis</span>
+      <span class="tag">threat intel →</span>
+    </a>
+    <a class="lab-row card rnew" href="logbook.html#soc">
+      <span class="name">iris<span class="new">NEW</span></span>
+      <span class="desc">n8n SOC automation: live dashboard, CVE and KEV tracking, and a SOAR playbook that blocks attackers on its own</span>
+      <span class="tag">soar →</span>
+    </a>
+  </div>
+
+  <div class="lab-teaser">
+    <a class="teaser card wide" href="logbook.html#soc">
+      <img src="soc-dashboard.png" alt="NETRUNNER SOC dashboard with live attack map, SOAR blocks and threat snapshot" loading="lazy">
+      <div class="t-body">
+        <span class="t-title">netrunner // live soc dashboard</span>
+        <span class="t-arrow">logbook / 06 →</span>
+      </div>
+    </a>
+    <a class="teaser card" href="logbook.html#incident">
+      <img src="honeypotattackproof.png" alt="Cowrie session replay of a real attacker" loading="lazy">
+      <div class="t-body">
+        <span class="t-title">attacker session replay</span>
+        <span class="t-arrow">logbook / 04 →</span>
+      </div>
+    </a>
+    <a class="teaser card" href="logbook.html#siem">
+      <img src="wazuhAlert.png" alt="Wazuh SOC dashboard, 43,104 alerts in 24 hours" loading="lazy">
+      <div class="t-body">
+        <span class="t-title">43,104 alerts / 24h</span>
+        <span class="t-arrow">logbook / 03 →</span>
+      </div>
+    </a>
+  </div>
+  <p class="lab-more">Hosts are named for their jobs: <span title="shield of Zeus and Athena">Aegis</span> guards the edge, <span title="holds up the sky">Atlas</span> carries every VM, <span title="messenger of the gods">Hermes</span> carries the logs, <span title="spirit of trickery">Dolos</span> deceives, <span title="goddess of strategy and wisdom">Athena</span> investigates, and <span title="messenger goddess of the rainbow">Iris</span> delivers the alerts.</p>
+  <p class="lab-more">Full evidence, screenshots, and incident walkthrough in the <a href="logbook.html">logbook →</a></p>
+</section>
+
+<section id="contact">
+  <div class="sec-head" data-n="04">contact</div>
+  <div class="contact-box card">
+    <h2>let's connect</h2>
+    <p>Open to help desk, SOC analyst, and IT support opportunities in the Metro Atlanta area.</p>
+    <div class="contact-links">
+      <a class="btn" href="https://github.com/iCrypt0" target="_blank" rel="noopener">github</a>
+      <a class="btn" href="https://www.linkedin.com/in/chandlerkirk" target="_blank" rel="noopener">linkedin</a>
+    </div>
+  </div>
+</section>
+
+<footer>iCrypt0 © 2026 // built from scratch // hosted on github pages</footer>
+
+</main>
+
 <script>
 (function () {
-  var overlay = document.getElementById('lb-overlay');
-  var lbImg   = document.getElementById('lb-img');
-  var lbClose = document.getElementById('lb-close');
- 
-  function open(src, alt) {
-    lbImg.src = src;
-    lbImg.alt = alt || '';
-    overlay.classList.add('open');
-    document.body.style.overflow = 'hidden';
+  const el = document.getElementById('rotator');
+  if (!el) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    el.textContent = 'patterns and puzzles';
+    return;
   }
-  function close() {
-    overlay.classList.remove('open');
-    document.body.style.overflow = '';
-    lbImg.src = '';
+  const words = ['patterns', 'puzzles', 'failures', 'experience', 'curiosity', 'doing'];
+  let wordIdx = 0, charIdx = words[0].length, deleting = false;
+  function step() {
+    const word = words[wordIdx];
+    if (!deleting) {
+      charIdx++;
+      el.textContent = word.slice(0, charIdx);
+      if (charIdx >= word.length) { deleting = true; setTimeout(step, 2000); return; }
+      setTimeout(step, 70);
+    } else {
+      charIdx--;
+      el.textContent = word.slice(0, charIdx);
+      if (charIdx <= 0) { deleting = false; wordIdx = (wordIdx + 1) % words.length; setTimeout(step, 350); return; }
+      setTimeout(step, 40);
+    }
   }
- 
-  // wire up all evidence image links
-  document.querySelectorAll('.ev-img-wrap a').forEach(function (a) {
-    a.addEventListener('click', function (e) {
-      e.preventDefault();
-      var img = a.querySelector('img');
-      open(a.getAttribute('href'), img ? img.alt : '');
-    });
-  });
- 
-  // close on overlay click (but not on image click)
-  overlay.addEventListener('click', function (e) {
-    if (e.target !== lbImg) close();
-  });
-  lbClose.addEventListener('click', close);
- 
-  // close on Escape
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') close();
-  });
+  setTimeout(step, 2000);
 })();
 </script>
- 
+<script>
+(function () {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const canvas = document.getElementById('traces');
+  const ctx = canvas.getContext('2d');
+  const GRID = 56;
+  const COLORS = ['#2d8cff', '#8fd3ff', '#2d8cff'];
+  const MAX_CYCLES = 3;
+  const TRAIL_LEN = 120;
+  let cycles = [];
+  function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+  function snap(v) { return Math.round(v / GRID) * GRID; }
+  function spawn() {
+    const horizontal = Math.random() < 0.5;
+    const dir = Math.random() < 0.5 ? 1 : -1;
+    const x = horizontal ? (dir === 1 ? 0 : canvas.width) : snap(Math.random() * canvas.width);
+    const y = horizontal ? snap(Math.random() * canvas.height * 0.7) : (dir === 1 ? 0 : canvas.height);
+    return { x, y, dx: horizontal ? dir : 0, dy: horizontal ? 0 : dir,
+      speed: 1.1 + Math.random() * 0.9,
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      life: 0, maxLife: 500 + Math.random() * 500,
+      dying: false, trail: [{x, y}] };
+  }
+  function maybeTurn(c) {
+    const onX = Math.abs(c.x - snap(c.x)) < c.speed;
+    const onY = Math.abs(c.y - snap(c.y)) < c.speed;
+    if (onX && onY && Math.random() < 0.14) {
+      c.x = snap(c.x); c.y = snap(c.y);
+      if (c.dx !== 0) { c.dy = Math.random() < 0.5 ? 1 : -1; c.dx = 0; }
+      else { c.dx = Math.random() < 0.5 ? 1 : -1; c.dy = 0; }
+    }
+  }
+  function tick() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    while (cycles.length < MAX_CYCLES) cycles.push(spawn());
+    ctx.lineWidth = 1.5; ctx.lineCap = 'round';
+    cycles.forEach(c => {
+      if (!c.dying) {
+        c.x += c.dx * c.speed; c.y += c.dy * c.speed; c.life++;
+        maybeTurn(c);
+        c.trail.push({x: c.x, y: c.y});
+        if (c.trail.length > TRAIL_LEN) c.trail.shift();
+        const off = c.x < -GRID || c.x > canvas.width + GRID || c.y < -GRID || c.y > canvas.height + GRID;
+        if (c.life >= c.maxLife || off) c.dying = true;
+      } else { c.trail.shift(); c.trail.shift(); }
+      ctx.strokeStyle = c.color;
+      for (let i = 1; i < c.trail.length; i++) {
+        ctx.globalAlpha = (i / c.trail.length) * 0.35;
+        ctx.beginPath();
+        ctx.moveTo(c.trail[i-1].x, c.trail[i-1].y);
+        ctx.lineTo(c.trail[i].x, c.trail[i].y);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+    });
+    cycles = cycles.filter(c => c.trail.length > 1);
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+</script>
 </body>
 </html>
- 
